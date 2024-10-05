@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2>Crear Prestamo</h2>
+<form method="POST">
+    <div class="mb-3">
+        <label for="id_student" class="form-label">Alumno</label>
+        <select class="form-select" id="id_student" name="id_student" required>
+            {% for student in students %}
+                <option value="{{ student[0] }}">{{ student[1] }} {{ student[2] }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="book_ids" class="form-label">Libros</label>
+        <select class="form-select" id="book_ids" name="book_ids" multiple required>
+            {% for book in books %}
+                <option value="{{ book[0] }}">{{ book[1] }} (Disponible: {{ book[4] }})</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="loan_days" class="form-label">Días de Prestamo</label>
+        <input type="number" class="form-control" id="loan_days" name="loan_days" required min="1">
+    </div>
+    <button type="submit" class="btn btn-primary">Crear Prestamo</button>
+</form>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2>Agregar Libro</h2>
+<form method="POST">
+    <div class="mb-3">
+        <label for="title" class="form-label">Titulo</label>
+        <input type="text" class="form-control" id="title" name="title" required>
+    </div>
+    <div class="mb-3">
+        <label for="code" class="form-label">Código</label>
+        <input type="text" class="form-control" id="code" name="code" required>
+    </div>
+    <div class="mb-3">
+        <label for="acquisition_date" class="form-label">Fecha Ingreso</label>
+        <input type="date" class="form-control" id="acquisition_date" name="acquisition_date" required>
+    </div>
+    <div class="mb-3">
+        <label for="status" class="form-label">Estado</label>
+        <select class="form-control" id="status" name="status" required>
+            <option value="DISPONIBLE">Disponible</option>
+            <option value="PRESTADO">Prestado</option>
+            <option value="OBSOLETO">Obsoleto</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="quantity" class="form-label">Cantidad</label>
+        <input type="number" class="form-control" id="quantity" name="quantity" min="0" required>
+    </div> 
+    <button type="submit" class="btn btn-primary">Agregar Libro</button>
+</form>
+{% endblock %}

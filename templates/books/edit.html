@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2>Editar Libro</h2>
+<form method="POST">
+    <div class="mb-3">
+        <label for="title" class="form-label">Titulo</label>
+        <input type="text" class="form-control" id="title" name="title" value="{{ book[1] }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="code" class="form-label">Código</label>
+        <input type="text" class="form-control" id="code" name="code" value="{{ book[2] }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="acquisition_date" class="form-label">Fecha Ingreso</label>
+        <input type="date" class="form-control" id="acquisition_date" name="acquisition_date" value="{{ book[3] }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="status" class="form-label">Estado</label>
+        <select class="form-control" id="status" name="status" required>
+            <option value="DISPONIBLE" {% if book[4] == 'DISPONIBLE' %}selected{% endif %}>Disponible</option>
+            <option value="PRESTADO" {% if book[4] == 'PRESTADO' %}selected{% endif %}>Prestado</option>
+            <option value="OBSOLETO" {% if book[4] == 'OBSOLETO' %}selected{% endif %}>Obsoleto</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="quantity" class="form-label">Cantidad</label>
+        <input type="number" class="form-control" id="quantity" name="quantity" value="{{ book[5] }}" min="0" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Actualizar</button>
+</form>
+{% endblock %}

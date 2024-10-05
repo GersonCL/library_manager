@@ -1,0 +1,32 @@
+<!-- templates/students/edit.html -->
+{% extends "layout.html" %}
+{% block content %}
+<h2>Editar Alumno</h2>
+<form method="POST">
+    <div class="mb-3">
+        <label for="name" class="form-label">Nombres</label>
+        <input type="text" class="form-control" id="name" name="name" value="{{ student[1] }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="lastname" class="form-label">Apellidos</label>
+        <input type="text" class="form-control" id="lastname" name="lastname" value="{{ student[2] }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="student_id" class="form-label">Carné</label>
+        <input type="text" class="form-control" id="student_id" name="student_id" value="{{ student[3] }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="secondary_school" class="form-label">Escuela</label>
+        <input type="text" class="form-control" id="secondary_school" name="secondary_school" value="{{ student[4] }}">
+    </div>
+    <div class="mb-3">
+        <label for="grade" class="form-label">Grado</label>
+        <input type="text" class="form-control" id="grade" name="grade" value="{{ student[5] }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="section" class="form-label">Sección</label>
+        <input type="text" class="form-control" id="section" name="section" value="{{ student[6] }}" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Actualizar</button>
+</form>
+{% endblock %}

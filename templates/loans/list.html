@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2>Prestamos</h2>
+<a href="{{ url_for('create_loan') }}" class="btn btn-primary mb-3">Crear Prestamo</a>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Alumno</th>
+            <th>Libros</th>
+            <th>Fecha de Prestamo</th>
+            <th>Fecha de Devolución</th>
+            <th>Dias de Prestamo</th>
+            <th>Renovaciones</th>
+            <th>Mora</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for loan in loans %}
+        <tr>
+            <td>{{ loan[0] }}</td>
+            <td>{{ loan[7] }} {{ loan[8] }}</td>
+            <td>{{ loan[9] }}</td>
+            <td>{{ loan[2] }}</td>
+            <td>{{ loan[3] }}</td>
+            <td>{{ loan[4] }}</td>
+            <td>{{ loan[5] }}</td>
+            <td>{{ loan[6] }}</td>
+            <td>
+                <a href="{{ url_for('edit_loan', id=loan[0]) }}" class="btn btn-sm btn-warning">Editar</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

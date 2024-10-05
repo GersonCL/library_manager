@@ -1,0 +1,32 @@
+<!-- templates/students/create.html -->
+{% extends "layout.html" %}
+{% block content %}
+<h2>Agregar Alumno</h2>
+<form method="POST">
+    <div class="mb-3">
+        <label for="name" class="form-label">Nombres</label>
+        <input type="text" class="form-control" id="name" name="name" required>
+    </div>
+    <div class="mb-3">
+        <label for="lastname" class="form-label">Apellidos</label>
+        <input type="text" class="form-control" id="lastname" name="lastname" required>
+    </div>
+    <div class="mb-3">
+        <label for="student_id" class="form-label">Carné</label>
+        <input type="text" class="form-control" id="student_id" name="student_id" required>
+    </div>
+    <div class="mb-3">
+        <label for="secondary_school" class="form-label">Escuela</label>
+        <input type="text" class="form-control" id="secondary_school" name="secondary_school">
+    </div>
+    <div class="mb-3">
+        <label for="grade" class="form-label">Grado</label>
+        <input type="text" class="form-control" id="grade" name="grade" required>
+    </div>
+    <div class="mb-3">
+        <label for="section" class="form-label">Sección</label>
+        <input type="text" class="form-control" id="section" name="section" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Agregar</button>
+</form>
+{% endblock %}
