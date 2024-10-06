@@ -3,6 +3,7 @@ from config import app
 from models.loan import Loan
 from models.student import Student
 from models.book import Book
+from validation import validate_loan_days
 
 @app.route('/loans')
 def list_loans():
@@ -15,6 +16,12 @@ def create_loan():
         id_student = request.form['id_student']
         loan_days = int(request.form['loan_days'])
         book_ids = request.form.getlist('book_ids')
+        
+        #Aqui validamos los dias prestados
+        is_valid, loan_days = validate_loan_days(loan_days)
+        if not is_valid:
+            flash(loan_days, 'error')
+            return redirect(url_for('create_loan'))
         
         success, message = Loan.create(id_student, loan_days, book_ids)
         if success:
@@ -34,6 +41,7 @@ def edit_loan(id):
         return_date = request.form['return_date']
         renewals = int(request.form['renewals'])
         late_fee = float(request.form['late_fee'])
+
         
         Loan.update(id, return_date, renewals, late_fee)
         flash('Pretamos editado', 'success')
@@ -43,6 +51,9 @@ def edit_loan(id):
 
 @app.route('/loans/delete/<int:id>')
 def delete_loan(id):
-    Loan.delete(id)
-    flash('Prestamo eliminado', 'success')
+    success, message = Loan.delete(id)
+    if success:
+        flash(message, 'success')
+    else:
+        flash(message, 'error')
     return redirect(url_for('list_loans'))
