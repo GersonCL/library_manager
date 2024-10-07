@@ -1,7 +1,7 @@
 from flask import render_template, request, redirect, url_for, flash
 from config import app
 from models.book import Book
-from validation import validate_title, validate_code, validate_acquisition_date, validate_quantity
+from controllers.validation import validate_title, validate_code, validate_acquisition_date, validate_quantity
 
 @app.route('/books')
 def list_books():
