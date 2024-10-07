@@ -29,7 +29,6 @@
             <td>{{ loan[6] }}</td>
             <td>
                 <a href="{{ url_for('edit_loan', id=loan[0]) }}" class="btn btn-sm btn-warning">Editar</a>
-                <a href="{{ url_for('delete_loan', id=loan[0]) }}" class="btn btn-sm btn-danger" onclick="return confirm('¿Esta seguro que quiere eliminar el prestamo?')">Eliminar</a>
             </td>
         </tr>
         {% endfor %}

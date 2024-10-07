@@ -15,6 +15,7 @@ def validate_code(code):
         return False, 'El código es obligatorio.'
     return True, ''
 
+#todo: esto se puede hacer en html
 def validate_acquisition_date(acquisition_date):
     if not acquisition_date:
         return False, 'La fecha de ingreso es obligatoria'
@@ -42,6 +43,7 @@ def validate_lastname(lastname):
         return False, 'El nombre no puede contener numeros ni caracteres especiales'
     return True, ''
 
+#todo: esta validacion no debe ir, el código debe ser automatico
 def validate_student_id(student_id):
     if len(student_id) > 10:
         return False, 'El limite de codigo es de 10 digitos'

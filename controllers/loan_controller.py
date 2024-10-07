@@ -3,7 +3,7 @@ from config import app
 from models.loan import Loan
 from models.student import Student
 from models.book import Book
-from validation import validate_loan_days
+from controllers.validation import validate_loan_days
 
 @app.route('/loans')
 def list_loans():

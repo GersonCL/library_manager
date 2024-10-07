@@ -1,7 +1,7 @@
 from flask import render_template, request, redirect, url_for, flash
 from config import app
 from models.student import Student
-from validation import validate_name, validate_lastname, validate_student_id, validate_grade, validate_secondary_school, validate_section
+from controllers.validation import validate_name, validate_lastname, validate_student_id, validate_grade, validate_secondary_school, validate_section
 
 @app.route('/students')
 def list_students():

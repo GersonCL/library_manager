@@ -86,6 +86,7 @@ class Loan:
 
     @staticmethod
     def update(id_loan, return_date, renewals, late_fee):
+        #todo: autoincrementar las renovaciones, calcular la fecha de devolucion
         cur = mysql.connection.cursor()
         cur.execute("UPDATE loans SET return_date = %s, renewals = %s, late_fee = %s WHERE id_loan = %s",
                     (return_date, renewals, late_fee, id_loan))
