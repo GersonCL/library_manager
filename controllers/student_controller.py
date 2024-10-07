@@ -13,7 +13,6 @@ def create_student():
     if request.method == 'POST':
         name = request.form['name']
         lastname = request.form['lastname']
-        student_id = request.form['student_id']
         secondary_school = request.form['secondary_school']
         grade = request.form['grade']
         section = request.form['section']
@@ -25,11 +24,6 @@ def create_student():
             return redirect(url_for('create_student'))
         
         is_valid, message = validate_lastname(lastname)
-        if not is_valid:
-            flash(message, 'error')
-            return redirect(url_for('create_student'))
-        
-        is_valid, message = validate_student_id(student_id)
         if not is_valid:
             flash(message, 'error')
             return redirect(url_for('create_student'))
@@ -49,9 +43,13 @@ def create_student():
             flash(message, 'error')
             return redirect(url_for('create_student'))
 
-        Student.create(name, lastname, student_id, secondary_school, grade, section)
-        flash('Alumno Agregado', 'success')
-        return redirect(url_for('list_students'))
+        success, message, student_id = Student.create(name, lastname, secondary_school, grade, section)
+        if success:
+            flash(f"{message} Carné del estudiante: {student_id}", 'success')
+            return redirect(url_for('list_students'))
+        else:
+            flash(message, 'error')
+    
     return render_template('students/create.html')
 
 @app.route('/students/edit/<int:id>', methods=['GET', 'POST'])

@@ -1,4 +1,7 @@
 from config import mysql
+import datetime
+import random
+import string
 
 class Student:
     def __init__(self, name, lastname, student_id, secondary_school, grade, section):
@@ -10,12 +13,45 @@ class Student:
         self.section = section
 
     @staticmethod
-    def create(name, lastname, student_id, secondary_school, grade, section):
+    def generate_student_id(lastname):
+        current_year = datetime.datetime.now().year
+        year_suffix = str(current_year)[-2:]
+        
+        # Obtener las iniciales de todos los apellidos (lastname)
+        initials = ''.join([word[0].upper() for word in lastname.split()])
+        initials = initials.ljust(2, 'X')[:2]  # Asegurar que tengamos 2 caracteres, rellenando con 'X' si es necesario
+        
         cur = mysql.connection.cursor()
-        cur.execute("INSERT INTO students (name, lastname, student_id, secondary_school, grade, section) VALUES (%s, %s, %s, %s, %s, %s)", 
-                    (name, lastname, student_id, secondary_school, grade, section))
-        mysql.connection.commit()
-        cur.close()
+        while True:
+            # Generar 4 dígitos aleatorios
+            random_digits = ''.join(random.choices(string.digits, k=4))
+            
+            # Construir el student_id
+            student_id = f"{initials}{random_digits}{year_suffix}"
+            
+            # Verificar si ya existe
+            cur.execute("SELECT COUNT(*) FROM students WHERE student_id = %s", (student_id,))
+            if cur.fetchone()[0] == 0:
+                cur.close()
+                return student_id
+            
+    @staticmethod
+    def create(name, lastname, secondary_school, grade, section):
+        student_id = Student.generate_student_id(lastname)
+        cur = mysql.connection.cursor()
+        try:
+            cur.execute("""
+                INSERT INTO students (name, lastname, student_id, secondary_school, grade, section)
+                VALUES (%s, %s, %s, %s, %s, %s)
+            """, (name, lastname, student_id, secondary_school, grade, section))
+            mysql.connection.commit()
+            return True, "Estudiante creado con éxito.", student_id
+        except Exception as e:
+            mysql.connection.rollback()
+            return False, f"Error al crear el estudiante: {str(e)}", None
+        finally:
+            cur.close()
+
 
     @staticmethod
     def get_all():
