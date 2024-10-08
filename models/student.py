@@ -113,6 +113,20 @@ class Student:
         cur.close()
 
     @staticmethod
+    def decrement_borrowed_books_multiple(id_student, books_returned):
+        """
+        Disminuye el número de libros prestados de un estudiante por la cantidad especificada.
+        """
+        cur = mysql.connection.cursor()
+        cur.execute("""
+            UPDATE students 
+            SET books_borrowed = books_borrowed - %s 
+            WHERE id_student = %s
+        """, (books_returned, id_student))
+        mysql.connection.commit()
+        cur.close()
+
+    @staticmethod
     def get_borrowed_books_count(id_student):
         cur = mysql.connection.cursor()
         cur.execute("SELECT books_borrowed FROM students WHERE id_student = %s", (id_student,))
