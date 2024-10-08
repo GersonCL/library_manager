@@ -39,7 +39,7 @@ class Loan:
                 cur.execute("UPDATE books SET quantity = quantity - 1 WHERE id_book = %s", (book_id,))
 
             # Incrementar el contador de libros prestados del estudiante
-            Student.increment_borrowed_books(id_student)
+            Student.increment_borrowed_books(id_student, len(book_ids))
 
             # Confirmar todos los cambios en la base de datos
             mysql.connection.commit()
@@ -67,6 +67,28 @@ class Loan:
         loans = cur.fetchall()
         cur.close()
         return loans
+    
+    @staticmethod
+    def get_active_loans():
+        cur = mysql.connection.cursor()
+        try:
+            cur.execute("""
+                SELECT l.*, s.name, s.lastname, 
+                       GROUP_CONCAT(b.title SEPARATOR ', ') as books
+                FROM loans l
+                JOIN students s ON l.id_student = s.id_student
+                JOIN loan_books lb ON l.id_loan = lb.id_loan
+                JOIN books b ON lb.id_book = b.id_book
+                LEFT JOIN returns r ON l.id_loan = r.id_loan
+                WHERE r.id_return IS NULL
+                GROUP BY l.id_loan
+                ORDER BY l.loan_date DESC
+            """)
+            active_loans = cur.fetchall()
+            print(active_loans)
+            return active_loans
+        finally:
+            cur.close()
 
     @staticmethod
     def get_by_id(id_loan):

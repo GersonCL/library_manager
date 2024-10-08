@@ -1,0 +1,22 @@
+<!-- templates/returns/create.html -->
+{% extends "layout.html" %}
+{% block content %}
+<h2>Registrar Devolución</h2>
+<form method="POST">
+    <div class="mb-3">
+        <label for="id_loan" class="form-label">Préstamo a Devolver</label>
+        <select class="form-select" id="id_loan" name="id_loan" required>
+            {% for loan in loans %}
+                <option value="{{ loan[0] }}">
+                    {{ loan[8] }} {{ loan[9] }} - {{ loan[10] }} (Prestado: {{ loan[2] }})
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="late_fee" class="form-label">Mora</label>
+        <input type="number" class="form-control" id="late_fee" name="late_fee" step="0.01" min="0" value="0.00">
+    </div>
+    <button type="submit" class="btn btn-primary">Registrar</button>
+</form>
+{% endblock %}
