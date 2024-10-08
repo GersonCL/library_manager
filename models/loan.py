@@ -39,7 +39,7 @@ class Loan:
                 cur.execute("UPDATE books SET quantity = quantity - 1 WHERE id_book = %s", (book_id,))
 
             # Incrementar el contador de libros prestados del estudiante
-            Student.increment_borrowed_books(id_student)
+            Student.increment_borrowed_books(id_student, len(book_ids))
 
             # Confirmar todos los cambios en la base de datos
             mysql.connection.commit()

@@ -99,9 +99,9 @@ class Student:
     #funciones para obtener la cantidad de libros prestamos por alumno
 
     @staticmethod
-    def increment_borrowed_books(id_student):
+    def increment_borrowed_books(id_student, num_books):
         cur = mysql.connection.cursor()
-        cur.execute("UPDATE students SET books_borrowed = books_borrowed + 1 WHERE id_student = %s", (id_student,))
+        cur.execute("UPDATE students SET books_borrowed = books_borrowed + %s WHERE id_student = %s", (num_books, id_student))
         mysql.connection.commit()
         cur.close()
 
