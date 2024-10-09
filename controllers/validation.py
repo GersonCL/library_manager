@@ -4,7 +4,7 @@ import re
 def validate_title(title):
     if len(title) > 150:
         return False, "El límite de título es de 150 caracteres."
-    if not title or not re.match(r'^[\w\s]+$', title):
+    if not title or not re.match(r'^[A-Za-záéíóúÁÉÍÓÚÑñ\w\s]+$', title):
         return False, 'El título es obligatorio y no puede contener caracteres especiales.'
     return True, ''
 
@@ -32,14 +32,14 @@ def validate_quantity(quantity):
 def validate_name(name):
     if len(name) > 50:
         return False, 'El limite de nombre es de 50 caracteres'
-    if not name or not re.match(r'^[a-zA-Z\s]+$', name):
+    if not name or not re.match(r'^[a-zA-ZáéíóúÁÉÍÓÚÑñ\s]+$', name):
         return False, 'El nombre no puede contener numeros ni caracteres especiales'
     return True, ''
 
 def validate_lastname(lastname):
     if len(lastname) > 50:
         return False, 'El limite de nombre es de 50 caracteres'
-    if not lastname or not re.match(r'^[a-zA-Z\s]+$', lastname):
+    if not lastname or not re.match(r'^[a-zA-ZáéíóúÁÉÍÓÚÑñ\s]+$', lastname):
         return False, 'El nombre no puede contener numeros ni caracteres especiales'
     return True, ''
 
@@ -54,21 +54,21 @@ def validate_student_id(student_id):
 def validate_secondary_school(secondary_school):
     if len(secondary_school) > 10:
         return False, 'El limite de Escuela es de 10 digitos'
-    if not secondary_school or not re.match(r'^[\w\s]+$', secondary_school):
+    if not secondary_school or not re.match(r'^[áéíóúÁÉÍÓÚÑñ\w\s]+$', secondary_school):
         return False, 'Escuela es obligatorio y no puede contener caracteres especiales'
     return True, ''
 
 def validate_grade(grade):
     if len(grade) > 20:
         return False, 'El limite de grado es de 20 digitos'
-    if not grade or not re.match(r'^[a-zA-Z\s]+$', grade):
+    if not grade or not re.match(r'^[a-zA-ZáéíóúÁÉÍÓÚÑñ\s]+$', grade):
         return False, 'El grado es obligatorio y no puede contener numero ni caracter especial'
     return True, ''
 
 def validate_section(section):
     if len(section) > 10:
         return False, 'el limite de seccion es de 10 digitos'
-    if not section or not re.match(r'^[a-zA-Z\s]+$', section):
+    if not section or not re.match(r'^[a-zA-ZáéíóúÁÉÍÓÚÑñ\s]+$', section):
         return False, 'La seccion es obligatorio y no puede contener numero ni caracter especial'
     return True, ''
 
