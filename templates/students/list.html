@@ -3,6 +3,14 @@
 {% block content %}
 <h2>Alumnos</h2>
 <a href="{{ url_for('create_student') }}" class="btn btn-primary mb-3">Agregar Alumno</a>
+<div class="search-container">
+    <input type="text" id="searchStudentId" placeholder="Enter Student ID">
+    <button id="searchButton">
+        <img src="\static\image\searchIcon.png" alt="Search" class="search-icon">
+    </button>
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/style.css') }}">
+</div>
+<div id="studentDetails"></div>
 <table class="table table-striped">
     <thead>
         <tr>
@@ -36,4 +44,8 @@
         {% endfor %}
     </tbody>
 </table>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/searchStudent.js') }}"></script>
 {% endblock %}

@@ -91,3 +91,36 @@ a {
 a:hover {
     text-decoration: underline;
 }
+
+/* Estilos para el botón */
+#searchButton {
+    background-color: transparent; 
+    border: none; 
+    padding: 0; 
+    cursor: pointer; 
+}
+
+/* Estilos para el icono */
+.search-icon {
+    width: 30px; 
+    height: 30px;
+    background-color: transparent;  
+    border: none; 
+}
+
+/* Estilo del contenedor de búsqueda */
+.search-container {
+    display: flex; 
+    align-items: center;
+    gap: 5px; 
+}
+
+/* Estilo del input */
+#searchStudentId {
+    width: 200px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+

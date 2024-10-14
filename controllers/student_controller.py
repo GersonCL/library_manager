@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect, url_for, flash
+from flask import render_template, request, redirect, url_for, flash, jsonify
 from config import app
 from models.student import Student
 from controllers.validation import validate_name, validate_lastname, validate_student_id, validate_grade, validate_secondary_school, validate_section
@@ -7,6 +7,14 @@ from controllers.validation import validate_name, validate_lastname, validate_st
 def list_students():
     students = Student.get_all()
     return render_template('students/list.html', students=students)
+
+@app.route('/students/<int:id_student>', methods=['GET'])
+def get_student(id_student):
+    student = Student.get_by_id(id_student)
+    if student:
+        return jsonify(success=True, student=student)
+    else:
+        return jsonify(success=False, message="Student not found"), 404
 
 @app.route('/students/create', methods=['GET', 'POST'])
 def create_student():
