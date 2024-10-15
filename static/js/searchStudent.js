@@ -1,5 +1,5 @@
 document.getElementById('searchButton').addEventListener('click', function() {
-    console.log('Search button clicked');
+    // console.log('Search button clicked');
     const studentId = document.getElementById('searchStudentId').value;
     if (studentId) {
         fetchStudentDetails(studentId);
