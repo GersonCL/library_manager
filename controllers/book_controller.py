@@ -1,7 +1,8 @@
-from flask import render_template, request, redirect, url_for, flash
+from flask import render_template, request, redirect, url_for, flash, jsonify
 from config import app
 from models.book import Book
 from controllers.validation import validate_title, validate_code, validate_acquisition_date, validate_quantity
+from config import mysql
 
 @app.route('/books')
 def list_books():
@@ -94,3 +95,34 @@ def delete_book(id):
     else:
         flash(message, 'error')
     return redirect(url_for('list_books'))
+
+
+@app.route('/books/search')
+def search_books():
+    query = request.args.get('query', '')
+    print(f"Searching for: {query}")
+    
+    cur = mysql.connection.cursor()
+    sql_query = """
+        SELECT id_book, title, code, quantity 
+        FROM books 
+        WHERE title LIKE %s AND quantity > 0 AND status = 'DISPONIBLE'
+        LIMIT 10
+    """
+    print(f"SQL Query: {sql_query}")
+    
+    cur.execute(sql_query, (f'%{query}%',))
+    books = cur.fetchall()
+    cur.close()
+    
+    print(f"Found {len(books)} books")
+    
+    result = [{
+        'id': book[0],
+        'title': book[1],
+        'code': book[2],
+        'available': book[3]
+    } for book in books]
+    
+    print(f"Returning: {result}")
+    return jsonify(result)

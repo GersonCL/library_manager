@@ -1,4 +1,5 @@
-from flask import render_template, request, redirect, url_for, flash
+from flask import render_template, request, redirect, url_for, flash, session
+import json
 from config import app
 from models.loan import Loan
 from models.student import Student
@@ -15,25 +16,32 @@ def create_loan():
     if request.method == 'POST':
         id_student = request.form['id_student']
         loan_days = int(request.form['loan_days'])
-        book_ids = request.form.getlist('book_ids')
+        books = json.loads(request.form['selected_books'])
         
-        #Aqui validamos los dias prestados
-        is_valid, loan_days = validate_loan_days(loan_days)
-        if not is_valid:
-            flash(loan_days, 'error')
-            return redirect(url_for('create_loan'))
+        success, result = Loan.create(id_student, loan_days, books)
         
-        success, message = Loan.create(id_student, loan_days, book_ids)
         if success:
-            flash(message, 'success')
-            return redirect(url_for('list_loans'))
+            loan_id = result  # Ahora result es el ID del préstamo
+            flash("Préstamo creado con éxito", 'success')
+            return redirect(url_for('loan_preview', loan_id=loan_id))
         else:
-            flash(message, 'error')
+            flash(f"Error al crear el préstamo: {result}", 'error')
+            return redirect(url_for('create_loan'))
     
     students = Student.get_all()
-    books = Book.get_available()
-    return render_template('loans/create.html', students=students, books=books)
+    return render_template('loans/create.html', students=students)
 
+@app.route('/loans/preview/<int:loan_id>')
+def loan_preview(loan_id):
+    loan = Loan.get_by_id(loan_id)
+    if not loan:
+        flash('Préstamo no encontrado', 'error')
+        return redirect(url_for('list_loans'))
+    
+    student = Student.get_by_id(loan[1])  # Asumiendo que id_student es el segundo campo en el resultado
+    books = Loan.get_books_for_loan(loan_id)
+    
+    return render_template('loans/preview.html', loan=loan, student=student, books=books)
 @app.route('/loans/edit/<int:id>', methods=['GET', 'POST'])
 def edit_loan(id):
     loan = Loan.get_by_id(id)

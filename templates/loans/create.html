@@ -1,44 +1,38 @@
 {% extends "layout.html" %}
 {% block content %}
-<h2>Crear Prestamo</h2>
 
-<!DOCTYPE html>
-<html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-        <title>Crear Libro</title>
-        <style>
-            .alert-error {
-                background-color: #f8d7da; /* Color de fondo rojo claro */
-                color: #721c24; /* Color del texto rojo oscuro */
-                border: 1px solid #f5c6cb; /* Borde rojo */
-            }
-        </style>
-    </head>
+<h2 class="mb-4">Crear Préstamo</h2>
 
-<form method="POST">
+<form id="loanForm" method="POST">
     <div class="mb-3">
-        <label for="id_student" class="form-label">Alumno</label>
-        <select class="form-select" id="id_student" name="id_student" required>
+        <label for="student" class="form-label">Alumno</label>
+        <select name="id_student" id="student" class="form-select" required>
             {% for student in students %}
-                <option value="{{ student[0] }}">{{ student[1] }} {{ student[2] }}</option>
+                <option value="{{ student[0] }}">{{ student[1] }} {{ student[2] }} ({{ student[3] }})</option>
             {% endfor %}
         </select>
     </div>
+    
     <div class="mb-3">
-        <label for="book_ids" class="form-label">Libros</label>
-        <select class="form-select" id="book_ids" name="book_ids" multiple required>
-            {% for book in books %}
-                <option value="{{ book[0] }}">{{ book[1] }} (Disponible: {{ book[4] }})</option>
-            {% endfor %}
-        </select>
+        <label for="bookSearch" class="form-label">Buscar Libros</label>
+        <input type="text" id="bookSearch" class="form-control" placeholder="Escriba para buscar libros...">
+        <div id="searchResults" class="mt-2"></div>
     </div>
+    
     <div class="mb-3">
-        <label for="loan_days" class="form-label">Días de Prestamo</label>
-        <input type="number" class="form-control" id="loan_days" name="loan_days" required min="1">
+        <h4>Libros Seleccionados</h4>
+        <ul id="selectedBooks" class="list-group"></ul>
     </div>
-    <button type="submit" class="btn btn-primary">Crear Prestamo</button>
+    
+    <div class="mb-3">
+        <label for="loanDays" class="form-label">Días de Préstamo</label>
+        <input type="number" name="loan_days" id="loanDays" class="form-control" required>
+    </div>
+    
+    <input type="hidden" name="selected_books" id="selectedBooksInput">
+    <button type="submit" class="btn btn-primary">Crear</button>
 </form>
+
+<script src="{{ url_for('static', filename='js/loan.js') }}"></script>
+
 {% endblock %}
