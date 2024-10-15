@@ -8,6 +8,20 @@ def validate_title(title):
         return False, 'El título es obligatorio y no puede contener caracteres especiales.'
     return True, ''
 
+def validate_author(author):
+    if len(author) > 50:
+        return False, "El límite del autor es de 50 caracteres."
+    if not author or not re.match(r'^[A-Za-záéíóúÁÉÍÓÚÑñ\s]+$', author):
+        return False, 'El autor es obligatorio y no puede contener numeros ni caracter especial'
+    return True, ''
+
+def validate_materia(materia):
+    if len(materia) > 20:
+        return False, "El límite de materia es de 20 caracteres."
+    if not materia or not re.match(r'^[A-Za-záéíóúÁÉÍÓÚÑñ\w\s]+$', materia):
+        return False, 'La materia es obligatoria y no puede contener números ni caracteres especiales.'
+    return True, ''
+
 def validate_code(code):
     if len(code) > 10:
         return False, "El limite de codigo es de 10 digitos"
@@ -49,13 +63,6 @@ def validate_student_id(student_id):
         return False, 'El limite de codigo es de 10 digitos'
     if not student_id or not re.match(r'^[\w\s]+$', student_id):
         return False, 'El Codigo estudiante es obligatorio y no puede contener caracteres especiales'
-    return True, ''
-
-def validate_secondary_school(secondary_school):
-    if len(secondary_school) > 10:
-        return False, 'El limite de Escuela es de 10 digitos'
-    if not secondary_school or not re.match(r'^[áéíóúÁÉÍÓÚÑñ\w\s]+$', secondary_school):
-        return False, 'Escuela es obligatorio y no puede contener caracteres especiales'
     return True, ''
 
 def validate_grade(grade):
