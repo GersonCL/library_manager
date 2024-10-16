@@ -4,10 +4,16 @@ from models.book import Book
 from controllers.validation import validate_title, validate_author, validate_materia, validate_code, validate_acquisition_date, validate_quantity
 from config import mysql
 
-@app.route('/books')
+@app.route('/books', methods=['GET'])
 def list_books():
-    books = Book.get_all()
-    return render_template('books/list.html', books=books)
+    query = request.args.get('query', '')
+    books = []  #lista vacia si no hay busquedas 
+
+    if query:
+        # Si hay un término de búsqueda, busca los libros
+        books = Book.search_by_title_author(query) 
+
+    return render_template('books/list.html', books=books, query=query)
 
 @app.route('/books/create', methods=['GET', 'POST'])
 def create_book():
@@ -113,7 +119,7 @@ def delete_book(id):
         flash(message, 'error')
     return redirect(url_for('list_books'))
 
-#ESTE ES EL SEARCH DE PRESTAMOS NO MODIFICAR..
+#ESTE ES EL SEARCH DE PRESTAMOS NO MODIFICAR......
 @app.route('/books/search')
 def search_books():
     query = request.args.get('query', '')
@@ -151,13 +157,29 @@ def search_books_by_title_author():
     query = request.args.get('query', '')
     print(f"Searching for: {query}")
 
-    cur = mysql.connection.cursor()
-    sql_query = """
-        SELECT id_book, title, author, materia, code, acquisition_date,  quantity, status
+    # Dividir el término de búsqueda en partes
+    search_terms = query.split()
+    
+    # Crear las condiciones de búsqueda
+    title_conditions = ' OR '.join(['title LIKE %s'] * len(search_terms))
+    author_conditions = ' OR '.join(['author LIKE %s'] * len(search_terms))
+    materia_conditions = ' OR '.join(['materia LIKE %s'] * len(search_terms))
+
+    sql_query = f"""
+        SELECT id_book, title, author, materia, code, acquisition_date, quantity, status
         FROM books 
-        WHERE (title LIKE %s OR author LIKE %s) AND quantity > 0 AND status = 'DISPONIBLE'
+        WHERE ({title_conditions} OR {author_conditions} OR {materia_conditions}) 
+        AND quantity > 0 AND status = 'DISPONIBLE'
     """
-    cur.execute(sql_query, (f'%{query}%', f'%{query}%'))
+    
+    # Preparar los parámetros para la consulta
+    params = []
+    for term in search_terms:
+        like_term = f'%{term}%'
+        params.extend([like_term] * 3)  # Se repite el término para título, autor y materia
+
+    cur = mysql.connection.cursor()
+    cur.execute(sql_query, params)
     books = cur.fetchall()
     cur.close()
 

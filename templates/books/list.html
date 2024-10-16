@@ -3,7 +3,7 @@
 <h2>Libros</h2>
 <div class="d-flex mb-3 align-items-center">
     <form class="me-2" method="GET" action="{{ url_for('search_books_by_title_author') }}">
-        <input type="text" name="query" placeholder="Buscar por Titulo o autor" value="{{ query }}" required class="form-control" style="width: 300px;">
+        <input type="text" name="query" placeholder="Buscar por Titulo, Autor y Materia" value="{{ query }}" required class="form-control" style="width: 300px;">
         <button type="submit" class="btn btn-primary mb-3" style="margin-right: 20px;">Buscar</button>
     </form>
     <a href="{{ url_for('create_book') }}" class="btn btn-primary ms-3">Agregar Libro</a>
