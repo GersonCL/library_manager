@@ -22,13 +22,19 @@
         font-size: 1.2rem;  /* Aumentamos ligeramente el tamaño del texto */
         margin-top: 0.5rem;  /* Añadimos espacio entre el icono y el texto */
     }
-    .header-image {
-        position: absolute; /* Permite que la imagen flote sobre otros elementos */
-        top: 56px; /* Ajusta según sea necesario */
-        left: 00px; /* Ajusta según sea necesario */
-        width: 250px; /* Ajusta el tamaño de la imagen */
-        height: auto; /* Mantiene la relación de aspecto */
-    }
+    body {
+    position: relative; /* Asegura que los elementos hijos se posicionen en relación a este contenedor */
+    margin: 0; /* Elimina márgenes por defecto */
+     }
+
+.header-image {
+    position: absolute; /* Permite que la imagen flote sobre otros elementos */
+    top: 56px; /* Ajusta según sea necesario para que esté más cerca de la parte superior */
+    left: 50%; /* Centro horizontalmente */
+    transform: translateX(-50%); /* Ajusta para centrar la imagen */
+    width: 250px; /* Ajusta el tamaño de la imagen */
+    height: auto; /* Mantiene la relación de aspecto */
+}
 </style>
 
 <img src="{{ url_for('static', filename='image/imagen1.png') }}" alt="Descripción de la imagen" class="header-image">
