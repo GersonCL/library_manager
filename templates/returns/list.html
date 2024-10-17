@@ -1,0 +1,30 @@
+<!-- templates/returns/list.html -->
+{% extends "layout.html" %}
+{% block content %}
+<h2>Lista de Devoluciones</h2>
+<a href="{{ url_for('create_return') }}" class="btn btn-primary mb-3">Registrar Nueva Devolución</a>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Estudiante</th>
+            <th>Libros</th>
+            <th>Fecha de Devolución</th>
+            <th>Días de Retraso</th>
+            <th>Tarifa por Retraso</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for return in returns %}
+        <tr>
+            <td>{{ return[0] }}</td>
+            <td>{{ return[6] }} {{ return[7] }}</td>
+            <td>{{ return[8] }}</td>
+            <td>{{ return[2] }}</td>
+            <td>{{ return[3] }}</td>
+            <td>${{ return[4] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

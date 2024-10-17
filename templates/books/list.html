@@ -1,12 +1,21 @@
 {% extends "layout.html" %}
 {% block content %}
 <h2>Libros</h2>
-<a href="{{ url_for('create_book') }}" class="btn btn-primary mb-3">Agregar Libro</a>
-<table class="table table-striped">
+<div class="d-flex mb-3 align-items-center">
+    <form class="me-2" method="GET" action="{{ url_for('search_books_by_title_author') }}">
+        <input type="text" name="query" placeholder="Buscar por Titulo, Autor y Materia" value="{{ query }}" required class="form-control" style="width: 300px;">
+        <button type="submit" class="btn btn-primary mb-3" style="margin-right: 20px;">Buscar</button>
+    </form>
+    <a href="{{ url_for('create_book') }}" class="btn btn-primary ms-3">Agregar Libro</a>
+</div>
+<h3>||------------------------------------------------------------------------------------------------||</h3>
+<table class="table table-striped" id="booksTable">
     <thead>
         <tr>
             <th>ID</th>
             <th>Titulo</th>
+            <th>Autor</th>
+            <th>Materia</th>
             <th>Coódigo</th>
             <th>Fecha Ingreso</th>
             <th>Cantidad</th>
@@ -23,6 +32,8 @@
             <td>{{ book[3] }}</td>
             <td>{{ book[4] }}</td>
             <td>{{ book[5] }}</td>
+            <td>{{ book[6] }}</td>
+            <td>{{ book[7] }}</td>
             <td>
                 <a href="{{ url_for('edit_book', id=book[0]) }}" class="btn btn-sm btn-warning">Editar</a>
                 <a href="{{ url_for('delete_book', id=book[0]) }}" class="btn btn-sm btn-danger" onclick="Confirmación('¿Está seguro de que desea eliminar este libro?')">Eliminar</a>

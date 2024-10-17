@@ -2,18 +2,20 @@ from config import mysql
 from datetime import date
 
 class Book:
-    def __init__(self, title, code, acquisition_date, status, quantity):
+    def __init__(self, title, author, materia, code, acquisition_date, status, quantity):
         self.title = title
         self.code = code
+        self.author = author
+        self.materia = materia
         self.acquisition_date = acquisition_date
         self.status = status
         self.quantity = quantity
 
     @staticmethod
-    def create(title, code, acquisition_date, quantity, status='AVAILABLE'):
+    def create(title, author, materia, code, acquisition_date, quantity, status='AVAILABLE'):
         cur = mysql.connection.cursor()
-        cur.execute("INSERT INTO books (title, code, acquisition_date, quantity, status) VALUES (%s, %s, %s, %s, %s)", 
-                    (title, code, acquisition_date, quantity, status))
+        cur.execute("INSERT INTO books (title, author, materia, code, acquisition_date, quantity, status) VALUES (%s, %s, %s, %s, %s, %s, %s)", 
+                    (title, author, materia, code, acquisition_date, quantity, status))
         mysql.connection.commit()
         cur.close()
 
@@ -34,10 +36,10 @@ class Book:
         return book
 
     @staticmethod
-    def update(id_book, title, code, acquisition_date, status, quantity):
+    def update(id_book, title, author, materia, code, acquisition_date, status, quantity):
         cur = mysql.connection.cursor()
-        cur.execute("UPDATE books SET title = %s, code = %s, acquisition_date = %s, quantity = %s, status = %s  WHERE id_book = %s",
-                    (title, code, acquisition_date, quantity, status, id_book))
+        cur.execute("UPDATE books SET title = %s, author = %s, materia = %s, code = %s, acquisition_date = %s, quantity = %s, status = %s  WHERE id_book = %s",
+                    (title, author, materia, code, acquisition_date, quantity, status, id_book))
         mysql.connection.commit()
         cur.close()
 
