@@ -6,7 +6,6 @@ CREATE TABLE IF NOT EXISTS students (
     name VARCHAR(50) NOT NULL,
     lastname VARCHAR(50) NOT NULL,
     student_id VARCHAR(10) UNIQUE NOT NULL,
-    secondary_school VARCHAR(10),
     grade VARCHAR(20) NOT NULL,
     section VARCHAR(10) NOT NULL,
     books_borrowed INT DEFAULT 0
@@ -15,6 +14,8 @@ CREATE TABLE IF NOT EXISTS students (
 CREATE TABLE IF NOT EXISTS books (
     id_book INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(150) NOT NULL,
+    author VARCHAR(50) NOT NULL,
+    materia VARCHAR(20) NOT NULL,
     code VARCHAR(10) UNIQUE NOT NULL,
     acquisition_date DATE,
     quantity INT DEFAULT 1,
