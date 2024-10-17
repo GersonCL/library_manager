@@ -85,8 +85,8 @@ class Book:
         return affected_rows > 0
 
     @staticmethod
-    def increase_quantity(id_book):
+    def increase_quantity(id_book, quantity=1):
         cur = mysql.connection.cursor()
-        cur.execute("UPDATE books SET quantity = quantity + 1 WHERE id_book = %s", (id_book,))
+        cur.execute("UPDATE books SET quantity = quantity + %s WHERE id_book = %s", (quantity, id_book))
         mysql.connection.commit()
         cur.close()

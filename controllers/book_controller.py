@@ -127,14 +127,16 @@ def search_books():
     
     cur = mysql.connection.cursor()
     sql_query = """
-        SELECT id_book, title, code, quantity 
+        SELECT id_book, title, author, materia, code, quantity 
         FROM books 
-        WHERE title LIKE %s AND quantity > 0 AND status = 'DISPONIBLE'
+        WHERE (title LIKE %s OR author LIKE %s OR materia LIKE %s OR code LIKE %s)
+        AND quantity > 0 AND status = 'DISPONIBLE'
         LIMIT 10
     """
     print(f"SQL Query: {sql_query}")
     
-    cur.execute(sql_query, (f'%{query}%',))
+    search_term = f'%{query}%'
+    cur.execute(sql_query, (search_term, search_term, search_term, search_term))
     books = cur.fetchall()
     cur.close()
     
@@ -143,12 +145,16 @@ def search_books():
     result = [{
         'id': book[0],
         'title': book[1],
-        'code': book[2],
-        'available': book[3]
+        'author': book[2],
+        'materia': book[3],
+        'code': book[4],
+        'available': book[5]
     } for book in books]
     
     print(f"Returning: {result}")
     return jsonify(result)
+
+
 #----------------------------------------------------------------------------------------------
 #ESTA ES LA BUSQUEDA DE LIBROS EN LIBROS -NO MODIFICAR-..........
 
@@ -168,8 +174,7 @@ def search_books_by_title_author():
     sql_query = f"""
         SELECT id_book, title, author, materia, code, acquisition_date, quantity, status
         FROM books 
-        WHERE ({title_conditions} OR {author_conditions} OR {materia_conditions}) 
-        AND quantity > 0 AND status = 'DISPONIBLE'
+        WHERE ({title_conditions} OR {author_conditions} OR {materia_conditions})
     """
     
     # Preparar los parámetros para la consulta
