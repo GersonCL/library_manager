@@ -30,7 +30,6 @@ CREATE TABLE IF NOT EXISTS loans (
     loan_days INT NOT NULL,
     renewals INT DEFAULT 0,
     late_fee DECIMAL(5,2) DEFAULT 0.00,
-    status ENUM('active', 'returned') DEFAULT 'active',
     FOREIGN KEY (id_student) REFERENCES students(id_student)
 );
 
@@ -53,6 +52,9 @@ CREATE TABLE IF NOT EXISTS returns (
     late_fee DECIMAL(10, 2) DEFAULT 0.00,
     FOREIGN KEY (id_loan) REFERENCES loans(id_loan)
 );
+
+
+ALTER TABLE loans ADD COLUMN status ENUM('active', 'returned') DEFAULT 'active';
 
 CREATE INDEX idx_student_name ON students(name, lastname);
 CREATE INDEX idx_book_title ON books(title);
