@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS loans (
     loan_days INT NOT NULL,
     renewals INT DEFAULT 0,
     late_fee DECIMAL(5,2) DEFAULT 0.00,
+    status ENUM('active', 'returned') DEFAULT 'active',
     FOREIGN KEY (id_student) REFERENCES students(id_student)
 );
 
@@ -37,12 +38,11 @@ CREATE TABLE IF NOT EXISTS loan_books (
     id_loan INT,
     id_book INT,
     return_date DATE NOT NULL,
+    quantity INT DEFAULT 1,
     PRIMARY KEY (id_loan, id_book),
     FOREIGN KEY (id_loan) REFERENCES loans(id_loan) ON DELETE CASCADE,
     FOREIGN KEY (id_book) REFERENCES books(id_book)
 );
-
-
 
 CREATE TABLE IF NOT EXISTS returns (
     id_return INT AUTO_INCREMENT PRIMARY KEY,
@@ -53,9 +53,16 @@ CREATE TABLE IF NOT EXISTS returns (
     FOREIGN KEY (id_loan) REFERENCES loans(id_loan)
 );
 
+CREATE TABLE IF NOT EXISTS returned_books (
+    id_return INT,
+    id_book INT,
+    quantity INT DEFAULT 1,
+    PRIMARY KEY (id_return, id_book),
+    FOREIGN KEY (id_return) REFERENCES returns(id_return),
+    FOREIGN KEY (id_book) REFERENCES books(id_book)
+);
 
-ALTER TABLE loans ADD COLUMN status ENUM('active', 'returned') DEFAULT 'active';
-
+-- Indexes
 CREATE INDEX idx_student_name ON students(name, lastname);
 CREATE INDEX idx_book_title ON books(title);
 CREATE INDEX idx_loan_dates ON loans(loan_date, return_date);

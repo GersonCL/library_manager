@@ -66,6 +66,7 @@ class Student:
         cur.execute("SELECT * FROM students WHERE id_student = %s", (id_student,))
         student = cur.fetchone()
         cur.close()
+        print(student)
         return student
 
     @staticmethod

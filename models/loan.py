@@ -24,36 +24,36 @@ class Loan:
             # Verificar si el estudiante ya tiene el máximo de libros prestados
             current_loans = Student.get_borrowed_books_count(id_student)
             total_books = sum(book['quantity'] for book in books)
-            logging.info(f"Current loans: {current_loans}, Total new books: {total_books}")
+            logging.info(f"prestamo actual: {current_loans}, Total libros nuevos: {total_books}")
             
             if current_loans + total_books > 3:
-                logging.warning("Exceeded maximum books limit")
+                logging.warning("maximo 3")
                 return False, "El estudiante no puede prestar más de 3 libros en total."
 
             # Insertar el nuevo préstamo en la tabla loans
             cur.execute("INSERT INTO loans (id_student, loan_date, return_date, loan_days) VALUES (%s, %s, %s, %s)",
                         (id_student, loan_date, return_date, loan_days))
             id_loan = cur.lastrowid
-            logging.info(f"Created loan with ID: {id_loan}")
+            logging.info(f"creado con id: {id_loan}")
 
             # Asociar cada libro al préstamo y actualizar su cantidad
             for book in books:
                 book_id = book['id']
                 quantity = book['quantity']
                 
-                logging.info(f"Processing book: id={book_id}, quantity={quantity}")
+                logging.info(f"libro: id={book_id}, quantity={quantity}")
                 
                 # Verificar disponibilidad
                 cur.execute("SELECT quantity FROM books WHERE id_book = %s", (book_id,))
                 available = cur.fetchone()[0]
-                logging.info(f"Available quantity for book {book_id}: {available}")
+                logging.info(f"cantidad disponible {book_id}: {available}")
                 
                 if available < quantity:
                     raise Exception(f"No hay suficientes copias disponibles del libro con ID {book_id}")
 
                 # Insertar en la tabla loan_books
-                cur.execute("INSERT INTO loan_books (id_loan, id_book, return_date) VALUES (%s, %s, %s)",
-                            (id_loan, book_id, return_date))
+                cur.execute("INSERT INTO loan_books (id_loan, id_book, quantity, return_date) VALUES (%s, %s, %s, %s)",
+                            (id_loan, book_id, quantity, return_date))
                 
                 # Actualizar la cantidad disponible del libro
                 cur.execute("UPDATE books SET quantity = quantity - %s WHERE id_book = %s", (quantity, book_id))
@@ -61,14 +61,14 @@ class Loan:
 
             # Incrementar el contador de libros prestados del estudiante
             Student.increment_borrowed_books(id_student, total_books)
-            logging.info(f"Incremented borrowed books count for student {id_student}")
+            logging.info(f"aumentando libros prestados {id_student}")
 
             mysql.connection.commit()
-            logging.info("Transaction committed successfully")
-            return True, id_loan  # Devolvemos el ID del préstamo en lugar del mensaje
+            logging.info("Todo bien!!!")
+            return True, id_loan
         except Exception as e:
             mysql.connection.rollback()
-            logging.error(f"Error creating loan: {str(e)}")
+            logging.error(f"Error: {str(e)}")
             return False, str(e)
         finally:
             cur.close()
@@ -76,36 +76,49 @@ class Loan:
     @staticmethod
     def get_all():
         cur = mysql.connection.cursor()
-        cur.execute("""
-            SELECT l.*, s.name, s.lastname, GROUP_CONCAT(b.title SEPARATOR ', ') as books
-            FROM loans l
-            JOIN students s ON l.id_student = s.id_student
-            JOIN loan_books lb ON l.id_loan = lb.id_loan
-            JOIN books b ON lb.id_book = b.id_book
-            GROUP BY l.id_loan
-        """)
-        loans = cur.fetchall()
-        cur.close()
-        return loans
-    
+        try:
+            cur.execute("""
+                SELECT l.*, s.name, s.lastname, 
+                    GROUP_CONCAT(DISTINCT b.title SEPARATOR ', ') as books,
+                    CASE 
+                        WHEN l.status = 'returned' THEN 'Devuelto'
+                        ELSE 'Activo'
+                    END as loan_status
+                FROM loans l
+                JOIN students s ON l.id_student = s.id_student
+                LEFT JOIN loan_books lb ON l.id_loan = lb.id_loan
+                LEFT JOIN books b ON lb.id_book = b.id_book
+                GROUP BY l.id_loan
+                ORDER BY l.loan_date DESC
+            """)
+            loans = cur.fetchall()
+            return loans
+        except Exception as e:
+            print(f"Error al obtener los préstamos: {e}")
+            return []
+        finally:
+            cur.close()
+            
     @staticmethod
     def get_active_loans():
         cur = mysql.connection.cursor()
         try:
             cur.execute("""
                 SELECT l.*, s.name, s.lastname, 
-                       GROUP_CONCAT(b.title SEPARATOR ', ') as books
+                    GROUP_CONCAT(DISTINCT b.title SEPARATOR ', ') as books,
+                    SUM(lb.quantity) as total_borrowed,
+                    COALESCE(SUM(rb.quantity), 0) as total_returned
                 FROM loans l
                 JOIN students s ON l.id_student = s.id_student
                 JOIN loan_books lb ON l.id_loan = lb.id_loan
                 JOIN books b ON lb.id_book = b.id_book
                 LEFT JOIN returns r ON l.id_loan = r.id_loan
-                WHERE r.id_return IS NULL
+                LEFT JOIN returned_books rb ON r.id_return = rb.id_return AND rb.id_book = lb.id_book
                 GROUP BY l.id_loan
+                HAVING total_borrowed > total_returned
                 ORDER BY l.loan_date DESC
             """)
             active_loans = cur.fetchall()
-            print(active_loans)
             return active_loans
         finally:
             cur.close()
@@ -122,15 +135,15 @@ class Loan:
     def get_books_for_loan(id_loan):
         cur = mysql.connection.cursor()
         cur.execute("""
-            SELECT b.id_book, b.title, lb.return_date
+            SELECT b.id_book, b.title, lb.return_date, lb.quantity
             FROM loan_books lb
             JOIN books b ON lb.id_book = b.id_book
-            WHERE lb.id_loan = %s
+            WHERE lb.id_loan = %s AND lb.quantity > 0
         """, (id_loan,))
         books = cur.fetchall()
         cur.close()
-        return books
-
+        return [{'id_book': book[0], 'title': book[1], 'return_date': book[2], 'quantity': book[3]} for book in books]
+    
     @staticmethod
     def update(id_loan, return_date, renewals, late_fee):
         #todo: autoincrementar las renovaciones, calcular la fecha de devolucion

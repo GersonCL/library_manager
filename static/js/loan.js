@@ -12,55 +12,63 @@ document.addEventListener('DOMContentLoaded', function() {
     bookSearch.addEventListener('input', debounce(searchBooks, 300));
     
     function searchBooks() {
-        const query = bookSearch.value;
-        console.log('Searching for:', query);
+        const query = bookSearch.value.trim();
+        console.log('buscador:', query);
         
-        if (query.length < 2) {
-            console.log('Query too short, not searching');
+        if (query.length === 0) {
+            console.log('sin nada que buscar');
+            searchResults.innerHTML = '';
             return;
         }
         
-        console.log('Fetching results for:', query);
+        if (query.length < 2) {
+            console.log('demasiado corto');
+            return;
+        }
+        
+        console.log('resultados:', query);
         fetch(`/books/search?query=${encodeURIComponent(query)}`)
             .then(response => {
-                console.log('Response status:', response.status);
+                console.log('estado:', response.status);
                 return response.json();
             })
+
             .then(books => {
                 console.log('Books received:', books);
                 searchResults.innerHTML = books.map(book => `
-                    <div class="book-result">
-                        ${book.title} (${book.code}) - Disponibles: ${book.available}
-                        <button class="btn btn-sm btn-primary" onclick="addBook(${book.id}, '${book.title}', ${book.available})">Agregar</button>
+                    <div class="list-group-item d-flex justify-content-between align-items-center py-2">
+                        <span class="me-3">${book.title} - Autor: ${book.author} - Materia: ${book.materia} -  <strong>Disponibles: ${book.available}</strong></span>
+                        <button class="btn btn-primary btn-sm" onclick="addBook(${book.id}, '${book.title}', ${book.available})">Agregar</button>
                     </div>
                 `).join('');
             })
+
             .catch(error => {
-                console.error('Error fetching books:', error);
+                console.error('erro:', error);
             });
     }
-    
+
     window.addBook = function(id, title, available) {
-        console.log('Adding book:', id, title, available);
+        console.log('agregando:', id, title, available);
         const existingBook = selectedBooksArray.find(book => book.id === id);
         if (existingBook) {
             if (existingBook.quantity < available) {
                 existingBook.quantity++;
-                console.log('Increased quantity for existing book');
+                console.log('Aumentar la Cantidad');
             } else {
-                console.log('No more copies available');
+                console.log('sin cantidad disponible');
                 alert('No hay más copias disponibles de este libro.');
                 return;
             }
         } else {
             selectedBooksArray.push({ id, title, quantity: 1 });
-            console.log('Added new book to selection');
+            console.log('Libro Agregado');
         }
         updateSelectedBooksList();
     }
     
     function updateSelectedBooksList() {
-        console.log('Updating selected books list');
+        console.log('actualiar la lista');
         selectedBooks.innerHTML = selectedBooksArray.map(book => `
             <li class="list-group-item d-flex justify-content-between align-items-center">
                 ${book.title} - Cantidad: ${book.quantity}
@@ -68,11 +76,11 @@ document.addEventListener('DOMContentLoaded', function() {
             </li>
         `).join('');
         selectedBooksInput.value = JSON.stringify(selectedBooksArray);
-        console.log('Selected books:', selectedBooksArray);
+        console.log('libros seleccionados:', selectedBooksArray);
     }
     
     window.removeBook = function(id) {
-        console.log('Removing book:', id);
+        console.log('libros eleminados:', id);
         selectedBooksArray = selectedBooksArray.filter(book => book.id !== id);
         updateSelectedBooksList();
     }
@@ -84,16 +92,16 @@ document.addEventListener('DOMContentLoaded', function() {
             const args = arguments;
             clearTimeout(timeoutId);
             timeoutId = setTimeout(() => {
-                console.log('Debounce triggered');
+                console.log('tiempo activo');
                 func.apply(context, args);
             }, delay);
         };
     }
     
     loanForm.addEventListener('submit', function(e) {
-        console.log('Form submitted');
+        console.log('enviado');
         if (selectedBooksArray.length === 0) {
-            console.log('No books selected, preventing submission');
+            console.log('comprobar libros');
             e.preventDefault();
             alert('Por favor, seleccione al menos un libro.');
         }

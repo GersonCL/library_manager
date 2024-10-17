@@ -1,6 +1,8 @@
 from flask import render_template, request, redirect, url_for, flash
 from config import app
 from models.student import Student
+from flask import jsonify
+from config import mysql
 from controllers.validation import validate_name, validate_lastname, validate_grade, validate_section
 
 @app.route('/students/create', methods=['GET', 'POST'])
@@ -85,3 +87,34 @@ def delete_student(id):
     else:
         flash(message, 'error')
     return redirect(url_for('list_students'))
+
+
+
+#busqueda por alumno
+
+@app.route('/students/search')
+def search_students():
+    query = request.args.get('query', '')
+    print(f"Searching for student: {query}")
+    
+    cur = mysql.connection.cursor()
+    sql_query = """
+        SELECT s.id_student, s.name, s.lastname, s.student_id, s.books_borrowed
+        FROM students s
+        WHERE s.name LIKE %s OR s.lastname LIKE %s OR s.student_id LIKE %s
+        LIMIT 10
+    """
+    
+    search_term = f'%{query}%'
+    cur.execute(sql_query, (search_term, search_term, search_term))
+    students = cur.fetchall()
+    cur.close()
+    
+    result = [{
+        'id': student[0],
+        'name': f"{student[1]} {student[2]}",
+        'student_id': student[3],
+        'books_borrowed': student[4]
+    } for student in students]
+    
+    return jsonify(result)

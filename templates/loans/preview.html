@@ -26,7 +26,7 @@
         <ul class="list-group">
         {% for book in books %}
             <li class="list-group-item">
-                {{ book[1] }} - Fecha de devolución: {{ book[2] }}
+                {{ book.title }} - Cantidad: {{ book.quantity }} - Fecha de devolución: {{ book.return_date }}
             </li>
         {% endfor %}
         </ul>

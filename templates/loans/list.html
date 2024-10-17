@@ -1,37 +1,46 @@
 {% extends "layout.html" %}
 {% block content %}
-<h2>Prestamos</h2>
-<a href="{{ url_for('create_loan') }}" class="btn btn-primary mb-3">Crear Prestamo</a>
-<table class="table table-striped">
+<h1>Lista de Préstamos</h1>
+<a href="{{ url_for('create_loan') }}" class="btn btn-primary mb-3">Registrar Nuevo Préstamo</a>
+
+{% if loans %}
+<table class="table">
     <thead>
         <tr>
             <th>ID</th>
-            <th>Alumno</th>
+            <th>Estudiante</th>
             <th>Libros</th>
-            <th>Fecha de Prestamo</th>
+            <th>Fecha de Préstamo</th>
             <th>Fecha de Devolución</th>
-            <th>Dias de Prestamo</th>
+            <th>Días de Préstamo</th>
             <th>Renovaciones</th>
             <th>Mora</th>
-            <th>Acciones</th>
+            <th>Estado</th>
         </tr>
     </thead>
     <tbody>
-        {% for loan in loans %}
+    {% for loan in loans %}
         <tr>
             <td>{{ loan[0] }}</td>
             <td>{{ loan[8] }} {{ loan[9] }}</td>
-            <td>{{ loan[10] }}</td>
+            <td>
+                {% if loan[11] == 'Devuelto' and not loan[10] %}
+                    Libros devueltos
+                {% else %}
+                    {{ loan[10] if loan[10] else 'No hay libros registrados' }}
+                {% endif %}
+            </td>
             <td>{{ loan[2] }}</td>
             <td>{{ loan[3] }}</td>
             <td>{{ loan[4] }}</td>
             <td>{{ loan[5] }}</td>
-            <td>{{ loan[6] }}</td>
-            <td>
-                <a href="{{ url_for('edit_loan', id=loan[0]) }}" class="btn btn-sm btn-warning">Editar</a>
-            </td>
+            <td>${{ loan[6] }}</td>
+            <td>{{ loan[11] }}</td>
         </tr>
-        {% endfor %}
+    {% endfor %}
     </tbody>
 </table>
+{% else %}
+<p>No hay préstamos registrados.</p>
+{% endif %}
 {% endblock %}

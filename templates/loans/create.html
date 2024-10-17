@@ -4,35 +4,39 @@
 <h2 class="mb-4">Crear Préstamo</h2>
 
 <form id="loanForm" method="POST">
-    <div class="mb-3">
-        <label for="student" class="form-label">Alumno</label>
-        <select name="id_student" id="student" class="form-select" required>
-            {% for student in students %}
-                <option value="{{ student[0] }}">{{ student[1] }} {{ student[2] }} ({{ student[3] }})</option>
-            {% endfor %}
-        </select>
+    <div class="mb-4">
+        <h4>Alumno</h4>
+        <input type="text" id="studentSearch" class="form-control" placeholder="Buscar por nombre o carnet">
+        <div id="studentResults" class="list-group mt-2"></div>
+        <input type="hidden" id="selectedStudentInput" name="id_student">
     </div>
     
-    <div class="mb-3">
-        <label for="bookSearch" class="form-label">Buscar Libros</label>
-        <input type="text" id="bookSearch" class="form-control" placeholder="Escriba para buscar libros...">
-        <div id="searchResults" class="mt-2"></div>
-    </div>
+    <div class="container mt-4">
+        <h3 class="mb-3">Buscar Libros</h3>
+        <div class="input-group mb-4">
+            <input type="text" id="bookSearch" class="form-control" placeholder="Buscar por título, autor, materia o código">
+        </div>
     
-    <div class="mb-3">
-        <h4>Libros Seleccionados</h4>
-        <ul id="selectedBooks" class="list-group"></ul>
-    </div>
+        <div id="searchResults" class="list-group mb-4 pt-2 px-3">
+            <!-- Los resultados de búsqueda se insertarán aquí -->
+        </div>
     
-    <div class="mb-3">
-        <label for="loanDays" class="form-label">Días de Préstamo</label>
-        <input type="number" name="loan_days" id="loanDays" class="form-control" required>
-    </div>
+        <h3 class="mb-3">Libros Seleccionados</h3>
+        <ul id="selectedBooks" class="list-group mb-4">
+            <!-- Los libros seleccionados se insertarán aquí -->
+        </ul>
     
-    <input type="hidden" name="selected_books" id="selectedBooksInput">
-    <button type="submit" class="btn btn-primary">Crear</button>
+        <div class="mb-3">
+            <label for="loanDays" class="form-label">Días de Préstamo</label>
+            <input type="number" name="loan_days" id="loanDays" class="form-control" required>
+        </div>
+    
+        <input type="hidden" name="selected_books" id="selectedBooksInput">
+        <button type="submit" class="btn btn-primary">Crear Préstamo</button>
+    </div>
 </form>
 
 <script src="{{ url_for('static', filename='js/loan.js') }}"></script>
+<script src="{{ url_for('static', filename='js/student.js') }}"></script>
 
 {% endblock %}

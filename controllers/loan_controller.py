@@ -38,10 +38,16 @@ def loan_preview(loan_id):
         flash('Préstamo no encontrado', 'error')
         return redirect(url_for('list_loans'))
     
-    student = Student.get_by_id(loan[1])  # Asumiendo que id_student es el segundo campo en el resultado
+    student = Student.get_by_id(loan[1])  # id_student deber ser el segundo campo 
     books = Loan.get_books_for_loan(loan_id)
     
+    # Necesito comprobar si estan los datos
+    print("Loan:", loan)
+    print("Student:", student)
+    print("Books:", books)  
+    
     return render_template('loans/preview.html', loan=loan, student=student, books=books)
+
 @app.route('/loans/edit/<int:id>', methods=['GET', 'POST'])
 def edit_loan(id):
     loan = Loan.get_by_id(id)
