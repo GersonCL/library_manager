@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+{% block content %}
+<h1>Lista de Devoluciones</h1>
+<a href="{{ url_for('create_return') }}" class="btn btn-primary mb-3">Registrar Nueva Devolución</a>
+{% if returns %}
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID Devolución</th>
+            <th>ID Préstamo</th>
+            <th>Estudiante</th>
+            <th>Libros Devueltos</th>
+            <th>Fecha de Devolución</th>
+            <th>Días de Retraso</th>
+            <th>Mora</th>
+            <th>Tipo</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for return in returns %}
+        <tr>
+            <td>{{ return[0] }}</td>
+            <td>{{ return[5] }}</td>
+            <td>{{ return[7] }} {{ return[8] }}</td>
+            <td>{{ return[9] }}</td>
+            <td>{{ return[2] }}</td>
+            <td>{{ return[3] }}</td>
+            <td>${{ return[4] }}</td>
+            <td>{{ return[10] }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No hay devoluciones registradas.</p>
+{% endif %}
+{% endblock %}

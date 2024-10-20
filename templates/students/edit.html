@@ -22,19 +22,15 @@
 <form method="POST">
     <div class="mb-3">
         <label for="name" class="form-label">Nombres</label>
-        <input type="text" class="form-control" id="name" name="name" value="{{ student[1] }}" required>
+        <input type="text" class="form-control" id="name" name="name" value="{{ student[1] }}" required readonly>
     </div>
     <div class="mb-3">
         <label for="lastname" class="form-label">Apellidos</label>
-        <input type="text" class="form-control" id="lastname" name="lastname" value="{{ student[2] }}" required>
+        <input type="text" class="form-control" id="lastname" name="lastname" value="{{ student[2] }}" required readonly>
     </div>
     <div class="mb-3">
         <label for="student_id" class="form-label">Carné</label>
-        <input type="text" class="form-control" id="student_id" name="student_id" value="{{ student[3] }}" required>
-    </div>
-    <div class="mb-3">
-        <label for="secondary_school" class="form-label">Escuela</label>
-        <input type="text" class="form-control" id="secondary_school" name="secondary_school" value="{{ student[4] }}">
+        <input type="text" class="form-control" id="student_id" name="student_id" value="{{ student[3] }}" required readonly>
     </div>
     <div class="mb-3">
         <label for="grade" class="form-label">Grado</label>

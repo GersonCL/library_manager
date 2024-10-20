@@ -1,14 +1,31 @@
 {% extends "layout.html" %}
 {% block content %}
 <h2>Editar Prestamo</h2>
+
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <title>Crear Libro</title>
+        <style>
+            .alert-error {
+                background-color: #f8d7da; /* Color de fondo rojo claro */
+                color: #721c24; /* Color del texto rojo oscuro */
+                border: 1px solid #f5c6cb; /* Borde rojo */
+            }
+        </style>
+    </head>
+
 <form method="POST">
     <div class="mb-3">
         <label class="form-label">Alumno</label>
-        <input type="text" class="form-control" value="{{ loan[7] }} {{ loan[8] }}" readonly>
+        <input type="text" class="form-control" value="{{ loan[8] }} {{ loan[9] }}" readonly>
     </div>
     <div class="mb-3">
         <label class="form-label">Libros</label>
-        <input type="text" class="form-control" value="{{ loan[9] }}" readonly>
+        <input type="text" class="form-control" value="{{ loan[10] }}" readonly>
     </div>
     <div class="mb-3">
         <label for="loan_date" class="form-label">Fecha Prestamo</label>

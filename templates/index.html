@@ -22,7 +22,22 @@
         font-size: 1.2rem;  /* Aumentamos ligeramente el tamaño del texto */
         margin-top: 0.5rem;  /* Añadimos espacio entre el icono y el texto */
     }
+    body {
+    position: relative; /* Asegura que los elementos hijos se posicionen en relación a este contenedor */
+    margin: 0; /* Elimina márgenes por defecto */
+     }
+
+.header-image {
+    position: absolute; /* Permite que la imagen flote sobre otros elementos */
+    top: 56px; /* Ajusta según sea necesario para que esté más cerca de la parte superior */
+    left: 50%; /* Centro horizontalmente */
+    transform: translateX(-50%); /* Ajusta para centrar la imagen */
+    width: 225px; /* Ajusta el tamaño de la imagen */
+    height: auto; /* Mantiene la relación de aspecto */
+}
 </style>
+
+<img src="{{ url_for('static', filename='image/imagen1.png') }}" alt="Descripción de la imagen" class="header-image">
 
 <div class="d-flex flex-column align-items-center justify-content-center" style="height: 80vh;">
     <div class="row justify-content-center text-center" style="width: 100%; max-width: 900px;">
@@ -45,9 +60,9 @@
             </a>
         </div>
         <div class="col-6 col-md-3 mb-4">
-            <a href="#" class="menu-item">
+            <a href="{{ url_for('list_returns') }}" class="menu-item">
                 <i class="fas fa-undo-alt menu-icon"></i>
-                <div class="menu-text">Returns</div>
+                <div class="menu-text">Devolucion</div>
             </a>
         </div>
     </div>
