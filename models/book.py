@@ -10,12 +10,13 @@ class Book:
         self.acquisition_date = acquisition_date
         self.status = status
         self.quantity = quantity
+        self.stock = quantity
 
     @staticmethod
     def create(title, author, materia, code, acquisition_date, quantity, status='AVAILABLE'):
         cur = mysql.connection.cursor()
-        cur.execute("INSERT INTO books (title, author, materia, code, acquisition_date, quantity, status) VALUES (%s, %s, %s, %s, %s, %s, %s)", 
-                    (title, author, materia, code, acquisition_date, quantity, status))
+        cur.execute("INSERT INTO books (title, author, materia, code, acquisition_date, quantity, stock, status) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", 
+                    (title, author, materia, code, acquisition_date, quantity, quantity, status))
         mysql.connection.commit()
         cur.close()
 
@@ -74,6 +75,35 @@ class Book:
         available_books = cur.fetchall()
         cur.close()
         return available_books
+    
+    @staticmethod
+    def get_total_stock(id_book):
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT stock FROM books WHERE id_book = %s", (id_book,))
+        result = cur.fetchone()
+        cur.close()
+        return result[0] if result else 0 
+    
+    @staticmethod
+    def get_available_books(id_book):
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT quantity FROM books WHERE quantity > 0 and id_book = %s", (id_book,))
+        available_books = cur.fetchone()
+        cur.close()
+        return available_books[0] if available_books else 0
+    
+    @staticmethod
+    def get_total_borrowed(id_book):
+        cur = mysql.connection.cursor()
+        cur.execute("""
+            SELECT lb.quantity
+            FROM loan_books lb
+            INNER JOIN books b ON lb.id_book = b.id_book
+            WHERE b.id_book = %s
+        """, (id_book,))
+        result = cur.fetchone()
+        cur.close()
+        return result[0] if result else 0
 
     @staticmethod
     def decrease_quantity(id_book):

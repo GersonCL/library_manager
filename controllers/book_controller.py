@@ -119,6 +119,27 @@ def delete_book(id):
         flash(message, 'error')
     return redirect(url_for('list_books'))
 
+@app.route('/books/details/<int:id>')
+def book_details(id):
+    book = Book.get_by_id(id)
+
+    if not book:
+        flash('Libro no encontrado.', 'error')
+        return redirect(url_for('list_book'))
+
+    book_id = book[0]
+
+    total_stock = Book.get_total_stock(book_id)
+    total_borrowed = Book.get_total_borrowed(book_id)
+    available_books = Book.get_available_books(book_id)
+
+    print(f"Book: {book}")
+    print(f"Total Stock: {total_stock}")
+    print(f"Total Borrowed: {total_borrowed}")
+    print(f"Available Books: {available_books}")
+
+    return render_template('books/details.html', book=book, total_stock=total_stock, total_borrowed=total_borrowed, available_books=available_books)
+
 #ESTE ES EL SEARCH DE PRESTAMOS NO MODIFICAR......
 @app.route('/books/search')
 def search_books():

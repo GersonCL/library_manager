@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS books (
     code VARCHAR(10) UNIQUE NOT NULL,
     acquisition_date DATE,
     quantity INT DEFAULT 1,
+    stock INT DEFAULT 1,
     status ENUM('DISPONIBLE', 'PRESTADO', 'OBSOLETO') DEFAULT 'DISPONIBLE'
 );
 
@@ -30,7 +31,7 @@ CREATE TABLE IF NOT EXISTS loans (
     loan_days INT NOT NULL,
     renewals INT DEFAULT 0,
     late_fee DECIMAL(5,2) DEFAULT 0.00,
-    status ENUM('active', 'returned') DEFAULT 'active',
+    -- status ENUM('active', 'returned') DEFAULT 'active',
     FOREIGN KEY (id_student) REFERENCES students(id_student)
 );
 
