@@ -62,9 +62,11 @@ def create_book():
             return redirect(url_for('create_book'))
 
         # Creamos el libro si todas las validaciones son exitosas
-        Book.create(title, author, materia, code, acquisition_date, quantity, status)
+        # Book.create(title, author, materia, code, acquisition_date, quantity, status)
+        book_id = Book.create(title, author, materia, code, acquisition_date, quantity, status)
         flash('Libro Agregado', 'success')
-        return redirect(url_for('list_books'))
+        return redirect(url_for('preview_book', id=book_id))  # Redirige a la vista previa
+        #return redirect(url_for('list_books'))
 
     return render_template('books/create.html')
 

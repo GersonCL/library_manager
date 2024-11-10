@@ -37,7 +37,7 @@
     </div>
     <div class="mb-3">
         <label for="acquisition_date" class="form-label">Fecha Ingreso</label>
-        <input type="date" class="form-control" id="acquisition_date" name="acquisition_date" required>
+        <input type="date" class="form-control" id="acquisition_date" name="acquisition_date" required readonly>
     </div>
     <div class="mb-3">
         <label for="status" class="form-label">Estado</label>
@@ -56,4 +56,10 @@
         <button type="submit" class="btn btn-primary">Agregar Libro</button>
     </div>
 </form>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var today = new Date().toISOString().split('T')[0];
+        document.getElementById('acquisition_date').value = today;
+    });
+</script>
 {% endblock %}
