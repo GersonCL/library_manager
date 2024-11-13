@@ -15,6 +15,12 @@ def list_books():
 
     return render_template('books/list.html', books=books, query=query)
 
+#aca es para archivar libros 
+@app.route('/archive')
+def archive():
+     return render_template('books/archive.html')
+
+
 @app.route('/books/create', methods=['GET', 'POST'])
 def create_book():
     if request.method == 'POST':
@@ -31,6 +37,8 @@ def create_book():
         if not is_valid:
             flash(message, 'error')
             return redirect(url_for('create_book'))
+
+        
         
         # Aqui validamos el autor
         is_valid, message = validate_author(author)
@@ -44,10 +52,10 @@ def create_book():
             return redirect(url_for('create_book'))
 
         # Aqui validamos el código
-        is_valid, message = validate_code(code)
-        if not is_valid:
-            flash(message, 'error')
-            return redirect(url_for('create_book'))
+        # is_valid, message = validate_code(code)
+        # if not is_valid:
+        #     flash(message, 'error')
+        #     return redirect(url_for('create_book'))
         
         # Aqui validamos la Fecha Ingreso
         is_valid, message = validate_acquisition_date(acquisition_date)
