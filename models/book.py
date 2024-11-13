@@ -12,13 +12,24 @@ class Book:
         self.quantity = quantity
         self.stock = quantity
 
-    @staticmethod
+    '''@staticmethod
     def create(title, author, materia, code, acquisition_date, quantity, status='AVAILABLE'):
         cur = mysql.connection.cursor()
         cur.execute("INSERT INTO books (title, author, materia, code, acquisition_date, quantity, stock, status) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", 
                     (title, author, materia, code, acquisition_date, quantity, quantity, status))
         mysql.connection.commit()
+        cur.close()'''
+
+    @staticmethod
+    def create(title, author, materia, code, acquisition_date, quantity, status='AVAILABLE'):
+        cur = mysql.connection.cursor()
+        cur.execute("INSERT INTO books (title, author, materia, code, acquisition_date, quantity, status) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+                    (title, author, materia, code, acquisition_date, quantity, status))
+        mysql.connection.commit()
+        book_id = cur.lastrowid  # Obtén el ID del último libro insertado
         cur.close()
+        return book_id
+
 
     @staticmethod
     def get_all():

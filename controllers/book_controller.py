@@ -62,19 +62,28 @@ def create_book():
             return redirect(url_for('create_book'))
 
         # Creamos el libro si todas las validaciones son exitosas
-        Book.create(title, author, materia, code, acquisition_date, quantity, status)
+        # Book.create(title, author, materia, code, acquisition_date, quantity, status)
+        book_id = Book.create(title, author, materia, code, acquisition_date, quantity, status)
         flash('Libro Agregado', 'success')
-        return redirect(url_for('list_books'))
+        return redirect(url_for('preview_book', id=book_id))  # Redirige a la vista previa
+        #return redirect(url_for('list_books'))
 
     return render_template('books/create.html')
+
+@app.route('/books/preview/<int:id>', methods=['GET'])
+def preview_book(id):
+    book = Book.get_by_id(id)
+    if not book:
+        flash('Libro no encontrado.', 'error')
+        return redirect(url_for('list_books'))
+    return render_template('books/preview.html', book=book)
 
 @app.route('/books/edit/<int:id>', methods=['GET', 'POST'])
 def edit_book(id):
     book = Book.get_by_id(id)
-
     if not book:
         flash('Libro no encontrado.', 'error')
-        return redirect(url_for('list_book'))
+        return redirect(url_for('list_books'))
     
     if request.method == 'POST':
         title = request.form['title']
@@ -84,7 +93,6 @@ def edit_book(id):
         acquisition_date = request.form['acquisition_date']
         quantity = int(request.form['quantity'])
         status = request.form['status']
-
         fields = {
             'title': title,
             'author': author,
@@ -92,9 +100,7 @@ def edit_book(id):
             'code': code,
             'acquisition_date': acquisition_date,
             'quantity': quantity,
-            
         }
-
         for field_name, field_value in fields.items():
             validator = globals().get(f'validate_{field_name}')
             if validator:
@@ -102,11 +108,10 @@ def edit_book(id):
                 if not is_valid:
                     flash(message, 'error')
                     return redirect(url_for('edit_book', id=id))
-
+        
         Book.update(id, title, author, materia, code, acquisition_date, status, quantity)
         flash('Libro editado con éxito', 'success')
-        return redirect(url_for('list_books'))
-
+        return redirect(url_for('preview_book', id=id))
     return render_template('books/edit.html', book=book)
 
 
