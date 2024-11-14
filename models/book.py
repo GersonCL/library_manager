@@ -113,6 +113,32 @@ class Book:
         cur.close()
         return True, "Libro eliminado con éxito."
     
+
+    @staticmethod
+    def archive(id_book):
+        cur = mysql.connection.cursor()
+        
+        # Verificar el estado del libro
+        cur.execute("SELECT status FROM books WHERE id_book = %s", (id_book,))
+        status = cur.fetchone()[0]
+        
+        # Verificar si hay libros prestados
+        cur.execute("""
+            SELECT SUM(quantity) 
+            FROM loan_books 
+            WHERE id_book = %s AND return_date >= %s
+        """, (id_book, date.today()))
+        quantity_borrowed = cur.fetchone()[0] or 0
+        
+        if status == 'PRESTADO' or quantity_borrowed > 0:
+            cur.close()
+            return False, "No se puede archivar un libro que está prestado"
+        
+        cur.execute("UPDATE books SET status = 'OBSOLETO' WHERE id_book = %s", (id_book,))
+        mysql.connection.commit()
+        cur.close()
+        return True, "Libro archivado exitosamente."
+    
     @staticmethod
     def get_available():
         cur = mysql.connection.cursor()

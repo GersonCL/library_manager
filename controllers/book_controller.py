@@ -161,6 +161,24 @@ def edit_book(id):
         return redirect(url_for('preview_book', id=id))
     return render_template('books/edit.html', book=book)
 
+@app.route('/archive_book/<int:id>', methods=['POST'])
+def archive_book(id):
+    success, message = Book.archive(id)
+    if success:
+        flash(message, 'success')
+    else:
+        flash(message, 'danger')
+    return redirect(url_for('list_books'))
+
+
+@app.route('/archived_books')
+def archived_books():
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM books WHERE status = 'OBSOLETO'")
+    archived_books = cur.fetchall()
+    cur.close()
+    return render_template('books/archived.html', books=archived_books)
+
 
 @app.route('/books/delete/<int:id>')
 def delete_book(id):
@@ -206,6 +224,13 @@ def search_books():
         AND quantity > 0 AND status = 'DISPONIBLE'
         LIMIT 10
     """
+    # sql_query = """
+    #     SELECT id_book, title, author, materia, code, quantity 
+    #     FROM books 
+    #     WHERE (title LIKE %s OR author LIKE %s OR materia LIKE %s OR code LIKE %s)
+    #     AND status IN ('DISPONIBLE', 'PRESTADO')
+    #     LIMIT 10
+    # """
     print(f"SQL Query: {sql_query}")
     
     search_term = f'%{query}%'
@@ -244,10 +269,17 @@ def search_books_by_title_author():
     author_conditions = ' OR '.join(['author LIKE %s'] * len(search_terms))
     materia_conditions = ' OR '.join(['materia LIKE %s'] * len(search_terms))
 
+    # sql_query = f"""
+    #     SELECT id_book, title, author, materia, code, acquisition_date, quantity, status
+    #     FROM books 
+    #     WHERE ({title_conditions} OR {author_conditions} OR {materia_conditions})
+    # """
+
     sql_query = f"""
         SELECT id_book, title, author, materia, code, acquisition_date, quantity, status
         FROM books 
         WHERE ({title_conditions} OR {author_conditions} OR {materia_conditions})
+        AND status IN ('DISPONIBLE', 'PRESTADO')
     """
     
     # Preparar los parámetros para la consulta
