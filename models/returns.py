@@ -38,6 +38,15 @@ class Returns:
 
             # Calcular días de retraso
             days_late = Returns.calculate_days_late(expected_return_date, actual_return_date)
+            late_fee = days_late * 0.50  # $0.50 por día
+
+            # Si hay retraso, actualizar la mora del estudiante
+            if days_late > 0:
+                cur.execute("""
+                    UPDATE students 
+                    SET late_fee = late_fee + %s 
+                    WHERE id_student = %s
+                """, (late_fee, id_student))
 
             # Registrar la devolución
             cur.execute("""
@@ -95,7 +104,8 @@ class Returns:
             Student.decrement_borrowed_books_multiple(id_student, sum(quantity for _, quantity in books_to_return))
 
             mysql.connection.commit()
-            return True, f"{message} Días de retraso: {days_late}"
+            mensaje_mora = f" Días de retraso: {days_late}. Mora generada: ${late_fee:.2f}" if days_late > 0 else ""
+            return True, f"Devolución registrada exitosamente.{mensaje_mora}"
         except Exception as e:
             mysql.connection.rollback()
             return False, f"Error al registrar la devolución: {str(e)}"

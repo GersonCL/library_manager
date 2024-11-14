@@ -37,6 +37,7 @@
             <th>Grado</th>
             <th>Sección</th>
             <th>Cant. Prestamos</th>
+            <th>Mora</th>
             <th>Acciones</th>
         </tr>
     </thead>
@@ -50,9 +51,26 @@
             <td>{{ student[4] }}</td>
             <td>{{ student[5] }}</td>
             <td>{{ student[6] }}</td>
+            <td>${{ "%.2f"|format(student[7] or 0) }}</td>
             <td>
-                <a href="{{ url_for('edit_student', id=student[0]) }}" class="btn btn-sm btn-warning">Editar</a>
-                <a href="{{ url_for('delete_student', id=student[0]) }}" class="btn btn-sm btn-danger" onclick="return confirm('Esta seguro que quiere eliminar al alumno?')">Eliminar</a>
+                <div class="btn-group" role="group">
+                    <a href="{{ url_for('edit_student', id=student[0]) }}" 
+                       class="btn btn-sm btn-warning">
+                        Editar
+                    </a>
+                    <a href="{{ url_for('delete_student', id=student[0]) }}" 
+                       class="btn btn-sm btn-danger" 
+                       onclick="return confirm('¿Está seguro que quiere eliminar al alumno?')">
+                        Eliminar
+                    </a>
+                    {% if student[7] and student[7] > 0 %}
+                    <a href="{{ url_for('clear_student_late_fee', id=student[0]) }}" 
+                       class="btn btn-sm btn-info"
+                       onclick="return confirm('¿Está seguro de limpiar la mora?')">
+                        Limpiar Mora
+                    </a>
+                    {% endif %}
+                </div>
             </td>
         </tr>
         {% endfor %}

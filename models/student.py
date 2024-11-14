@@ -1,3 +1,4 @@
+import logging
 from config import mysql
 import datetime
 import random
@@ -55,11 +56,18 @@ class Student:
     @staticmethod
     def get_all():
         cur = mysql.connection.cursor()
-        cur.execute("SELECT * FROM students")
-        students = cur.fetchall()
-        cur.close()
-        return students
-
+        try:
+            cur.execute("""
+                SELECT id_student, name, lastname, student_id, 
+                       grade, section, books_borrowed,
+                       COALESCE(late_fee, 0) as late_fee 
+                FROM students
+            """)
+            students = cur.fetchall()
+            return students
+        finally:
+            cur.close()
+            
     @staticmethod
     def get_by_id(id_student):
         cur = mysql.connection.cursor()
@@ -146,3 +154,45 @@ class Student:
         count = cur.fetchone()[0]
         cur.close()
         return count > 0
+    
+
+    @staticmethod
+    def has_late_fee(id_student):
+        """Verifica si el estudiante tiene mora pendiente"""
+        cur = mysql.connection.cursor()
+        try:
+            cur.execute("SELECT late_fee FROM students WHERE id_student = %s", (id_student,))
+            result = cur.fetchone()
+            if result is None:
+                return False
+            return result[0] is not None and float(result[0]) > 0
+        except Exception as e:
+            logging.error(f"Error verificando mora: {str(e)}")
+            return False
+        finally:
+            cur.close()
+
+    @staticmethod
+    def get_late_fee(id_student):
+        """Obtiene el monto de la mora del estudiante"""
+        cur = mysql.connection.cursor()
+        try:
+            cur.execute("SELECT COALESCE(late_fee, 0) FROM students WHERE id_student = %s", (id_student,))
+            result = cur.fetchone()
+            return float(result[0]) if result else 0.0
+        finally:
+            cur.close()        
+
+    @staticmethod
+    def clear_late_fee(id_student):
+        """Limpia la mora del estudiante"""
+        cur = mysql.connection.cursor()
+        try:
+            cur.execute("UPDATE students SET late_fee = 0 WHERE id_student = %s", (id_student,))
+            mysql.connection.commit()
+            return True, "Mora limpiada exitosamente"
+        except Exception as e:
+            mysql.connection.rollback()
+            return False, f"Error al limpiar la mora: {str(e)}"
+        finally:
+            cur.close()
