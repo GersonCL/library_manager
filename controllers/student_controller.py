@@ -118,3 +118,12 @@ def search_students():
     } for student in students]
     
     return jsonify(result)
+
+@app.route('/students/clear_late_fee/<int:id>')
+def clear_student_late_fee(id):
+    success, message = Student.clear_late_fee(id)
+    if success:
+        flash(message, 'success')
+    else:
+        flash(message, 'error')
+    return redirect(url_for('list_students'))

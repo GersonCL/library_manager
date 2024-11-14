@@ -69,3 +69,9 @@ CREATE INDEX idx_book_title ON books(title);
 CREATE INDEX idx_loan_dates ON loans(loan_date, return_date);
 CREATE INDEX idx_loan_student ON loans(id_student);
 CREATE INDEX idx_loan_book ON loan_books(id_book);
+
+
+
+-- Alter Table
+
+ALTER TABLE students ADD COLUMN late_fee DECIMAL(10,2) DEFAULT 0.00;

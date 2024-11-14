@@ -15,13 +15,20 @@ def list_loans():
 def create_loan():
     if request.method == 'POST':
         id_student = request.form['id_student']
+        print(id_student)
+        # Verificar si tiene mora pendiente
+        late_fee = Student.get_late_fee(id_student)
+        if late_fee > 0:
+            flash(f"No se puede realizar el préstamo. El estudiante tiene una mora pendiente de ${late_fee:.2f}", 'error')
+            return redirect(url_for('create_loan'))
+
         loan_days = int(request.form['loan_days'])
         books = json.loads(request.form['selected_books'])
         
         success, result = Loan.create(id_student, loan_days, books)
         
         if success:
-            loan_id = result  # Ahora result es el ID del préstamo
+            loan_id = result
             flash("Préstamo creado con éxito", 'success')
             return redirect(url_for('loan_preview', loan_id=loan_id))
         else:
