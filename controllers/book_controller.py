@@ -86,6 +86,45 @@ def preview_book(id):
         return redirect(url_for('list_books'))
     return render_template('books/preview.html', book=book)
 
+
+@app.route('/books/update_quantity', methods=['GET', 'POST'])
+def update_quantity():
+    if request.method == 'POST':
+        code = request.form.get('code')
+        quantity = int(request.form.get('quantity'))
+
+        # Buscar el libro por su código
+        cur = mysql.connection.cursor()
+        sql_query = """
+            SELECT id_book, title, author, materia, code, quantity, stock 
+            FROM books 
+            WHERE code = %s
+            LIMIT 1
+        """
+        cur.execute(sql_query, (code,))
+        book = cur.fetchone()
+        cur.close()
+        
+        if not book:
+            flash('Libro no encontrado', 'error')
+            return render_template('books/stockbook.html')
+        
+        # Actualizar la cantidad, el stock y la fecha de actualización
+        cur = mysql.connection.cursor()
+        update_query = """
+            UPDATE books 
+            SET quantity = quantity + %s, stock = stock + %s, update_date = NOW() 
+            WHERE code = %s
+        """
+        cur.execute(update_query, (quantity, quantity, code))
+        mysql.connection.commit()
+        cur.close()
+
+        flash('Cantidad actualizada correctamente', 'success')
+        return redirect(url_for('update_quantity'))
+
+    return render_template('books/stockbook.html')
+
 @app.route('/books/edit/<int:id>', methods=['GET', 'POST'])
 def edit_book(id):
     book = Book.get_by_id(id)

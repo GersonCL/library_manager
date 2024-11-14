@@ -75,3 +75,6 @@ CREATE INDEX idx_loan_book ON loan_books(id_book);
 -- Alter Table
 
 ALTER TABLE students ADD COLUMN late_fee DECIMAL(10,2) DEFAULT 0.00;
+
+ALTER TABLE books
+ADD COLUMN update_date DATETIME NULL;
