@@ -1,5 +1,6 @@
 from config import mysql
 from datetime import date
+import random, datetime, string
 
 class Book:
     def __init__(self, title, author, materia, code, acquisition_date, status, quantity):
@@ -22,6 +23,8 @@ class Book:
 
     @staticmethod
     def create(title, author, materia, code, acquisition_date, quantity, status='AVAILABLE'):
+        # creando book_id para generar el codigo automatico en la consulta -- Victor Orellana
+        code = Book.generate_book_id(title.upper())
         cur = mysql.connection.cursor()
         cur.execute("INSERT INTO books (title, author, materia, code, acquisition_date, quantity, stock, status) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
                     (title, author, materia, code, acquisition_date, quantity, quantity, status))
@@ -30,6 +33,37 @@ class Book:
         cur.close()
         return book_id
 
+
+    @staticmethod
+    def generate_book_id(bookname):
+
+#creando variable para manejar la fecha -- Victor Orellana
+        current_date = datetime.datetime.now()
+
+# 4 variables declaradas para la fecha, mes  y año -- Victor Orellana
+        current_year = current_date.year
+# el año idica que solo sera en cuenta dos digitos -- Victor Orellana
+        year_two_digit = str(current_year)[-2:]
+        month_two_digit = current_date.strftime("%m")
+        day_one_digit = current_date.day
+
+  # Obtener las iniciales del libro -- Victor Orellana
+        words = bookname.split()
+        initials_book_ = ''.join(word[0].upper() for word in words[:2])
+
+        cur = mysql.connection.cursor()
+        while True:
+# generar 3 digitos aleatorios -- Victor Orellana
+            random_digits = ''.join(random.choices(string.digits, k=3))
+
+#obtener el book_id -- Victor Orellana
+            code = f"{initials_book_}{random_digits}{day_one_digit}{month_two_digit}{year_two_digit}"
+
+# verificar si ya existe
+            cur.execute("SELECT COUNT(1) FROM books WHERE id_book = %s", (code,))
+            if cur.fetchone()[0] == 0:
+                cur.close()
+                return code
 
     @staticmethod
     def get_all():
