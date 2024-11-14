@@ -23,8 +23,8 @@ class Book:
     @staticmethod
     def create(title, author, materia, code, acquisition_date, quantity, status='AVAILABLE'):
         cur = mysql.connection.cursor()
-        cur.execute("INSERT INTO books (title, author, materia, code, acquisition_date, quantity, status) VALUES (%s, %s, %s, %s, %s, %s, %s)",
-                    (title, author, materia, code, acquisition_date, quantity, status))
+        cur.execute("INSERT INTO books (title, author, materia, code, acquisition_date, quantity, stock, status) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
+                    (title, author, materia, code, acquisition_date, quantity, quantity, status))
         mysql.connection.commit()
         book_id = cur.lastrowid  # Obtén el ID del último libro insertado
         cur.close()
