@@ -16,11 +16,26 @@ class Loan:
     @staticmethod
     def create(id_student, loan_days, books):
         logging.info(f"Creating loan: student={id_student}, days={loan_days}, books={books}")
+        
+        # Validar que el estudiante existe
         cur = mysql.connection.cursor()
-        loan_date = datetime.now().date()
-        return_date = loan_date + timedelta(days=loan_days)
+        cur.execute("SELECT id_student FROM students WHERE id_student = %s", (id_student,))
+        if not cur.fetchone():
+            return False, "Estudiante no encontrado"
+        
+        # Validar que la lista de libros no esté vacía
+        if not books:
+            return False, "No se han seleccionado libros"
+        
+        # Validar la estructura de cada libro
+        for book in books:
+            if not isinstance(book, dict) or 'id' not in book or 'quantity' not in book:
+                return False, "Formato de libros inválido"
         
         try:
+            loan_date = datetime.now().date()
+            return_date = loan_date + timedelta(days=loan_days)
+            
             # Verificar si el estudiante ya tiene el máximo de libros prestados
             current_loans = Student.get_borrowed_books_count(id_student)
             total_books = sum(book['quantity'] for book in books)
@@ -30,45 +45,42 @@ class Loan:
                 logging.warning("maximo 3")
                 return False, "El estudiante no puede prestar más de 3 libros en total."
 
-            # Insertar el nuevo préstamo en la tabla loans
+            # Insertar el nuevo préstamo
             cur.execute("INSERT INTO loans (id_student, loan_date, return_date, loan_days) VALUES (%s, %s, %s, %s)",
                         (id_student, loan_date, return_date, loan_days))
             id_loan = cur.lastrowid
-            logging.info(f"creado con id: {id_loan}")
-
-            # Asociar cada libro al préstamo y actualizar su cantidad
+            
+            # Asociar cada libro al préstamo
             for book in books:
                 book_id = book['id']
                 quantity = book['quantity']
                 
-                logging.info(f"libro: id={book_id}, quantity={quantity}")
-                
                 # Verificar disponibilidad
                 cur.execute("SELECT quantity FROM books WHERE id_book = %s", (book_id,))
-                available = cur.fetchone()[0]
-                logging.info(f"cantidad disponible {book_id}: {available}")
-                
+                result = cur.fetchone()
+                if not result:
+                    raise Exception(f"Libro con ID {book_id} no encontrado")
+                    
+                available = result[0]
                 if available < quantity:
                     raise Exception(f"No hay suficientes copias disponibles del libro con ID {book_id}")
 
-                # Insertar en la tabla loan_books
+                # Insertar en loan_books
                 cur.execute("INSERT INTO loan_books (id_loan, id_book, quantity, return_date) VALUES (%s, %s, %s, %s)",
                             (id_loan, book_id, quantity, return_date))
                 
-                # Actualizar la cantidad disponible del libro
+                # Actualizar cantidad del libro
                 cur.execute("UPDATE books SET quantity = quantity - %s WHERE id_book = %s", (quantity, book_id))
-                logging.info(f"Updated book quantity for book {book_id}")
 
-            # Incrementar el contador de libros prestados del estudiante
+            # Incrementar libros prestados del estudiante
             Student.increment_borrowed_books(id_student, total_books)
-            logging.info(f"aumentando libros prestados {id_student}")
 
             mysql.connection.commit()
-            logging.info("Todo bien!!!")
             return True, id_loan
+        
         except Exception as e:
             mysql.connection.rollback()
-            logging.error(f"Error: {str(e)}")
+            logging.error(f"Error en create_loan: {str(e)}")
             return False, str(e)
         finally:
             cur.close()

@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS books (
     code VARCHAR(10) UNIQUE NOT NULL,
     acquisition_date DATE,
     quantity INT DEFAULT 1,
+    stock INT DEFAULT 1,
     status ENUM('DISPONIBLE', 'PRESTADO', 'OBSOLETO') DEFAULT 'DISPONIBLE'
 );
 
@@ -30,7 +31,7 @@ CREATE TABLE IF NOT EXISTS loans (
     loan_days INT NOT NULL,
     renewals INT DEFAULT 0,
     late_fee DECIMAL(5,2) DEFAULT 0.00,
-    status ENUM('active', 'returned') DEFAULT 'active',
+    -- status ENUM('active', 'returned') DEFAULT 'active',
     FOREIGN KEY (id_student) REFERENCES students(id_student)
 );
 
@@ -68,3 +69,12 @@ CREATE INDEX idx_book_title ON books(title);
 CREATE INDEX idx_loan_dates ON loans(loan_date, return_date);
 CREATE INDEX idx_loan_student ON loans(id_student);
 CREATE INDEX idx_loan_book ON loan_books(id_book);
+
+
+
+-- Alter Table
+
+ALTER TABLE students ADD COLUMN late_fee DECIMAL(10,2) DEFAULT 0.00;
+
+ALTER TABLE books
+ADD COLUMN update_date DATETIME NULL;

@@ -3,13 +3,30 @@
 {% block content %}
 <h2>Alumnos</h2>
 <div class="d-flex mb-3 align-items-center">
+
+    <!-- 
     <form class="me-2" method="GET" action="{{ url_for('list_students') }}">
         <input type="text" name="query" placeholder="Buscar por nombre o carné" value="{{ query }}" required class="form-control" style="width: 300px;">
         <button type="submit" class="btn btn-primary mb-3" style="margin-right: 20px;">Buscar</button>
     </form>
     <a href="{{ url_for('create_student') }}" class="btn btn-primary ms-3">Agregar Alumno</a>
-</div>
+    -->
 
+    <!-- Inicio de la modificación -->
+    <div class="d-flex mb-3 align-items-center">
+        <form class="d-flex me-2" method="GET" action="{{ url_for('list_students') }}">
+            <input type="text" name="query" placeholder="Buscar por nombre o carné" value="{{ query }}" required class="form-control" style="width: 300px;">
+            <button type="submit" class="btn btn-primary ms-2">
+                <i class="fas fa-search"></i>
+            </button>
+            <a href="{{ url_for('create_student') }}" class="btn btn-primary ms-3">
+                <i class="fas fa-plus"></i>
+            </a>
+        </form>
+    
+    </div>
+
+</div>
 <table class="table table-striped" id="studentTable">
     <thead>
         <tr>
@@ -20,6 +37,7 @@
             <th>Grado</th>
             <th>Sección</th>
             <th>Cant. Prestamos</th>
+            <th>Mora</th>
             <th>Acciones</th>
         </tr>
     </thead>
@@ -33,9 +51,26 @@
             <td>{{ student[4] }}</td>
             <td>{{ student[5] }}</td>
             <td>{{ student[6] }}</td>
+            <td>${{ "%.2f"|format(student[7] or 0) }}</td>
             <td>
-                <a href="{{ url_for('edit_student', id=student[0]) }}" class="btn btn-sm btn-warning">Editar</a>
-                <a href="{{ url_for('delete_student', id=student[0]) }}" class="btn btn-sm btn-danger" onclick="return confirm('Esta seguro que quiere eliminar al alumno?')">Eliminar</a>
+                <div class="btn-group" role="group">
+                    <a href="{{ url_for('edit_student', id=student[0]) }}" 
+                       class="btn btn-sm btn-warning">
+                        Editar
+                    </a>
+                    <a href="{{ url_for('delete_student', id=student[0]) }}" 
+                       class="btn btn-sm btn-danger" 
+                       onclick="return confirm('¿Está seguro que quiere eliminar al alumno?')">
+                        Eliminar
+                    </a>
+                    {% if student[7] and student[7] > 0 %}
+                    <a href="{{ url_for('clear_student_late_fee', id=student[0]) }}" 
+                       class="btn btn-sm btn-info"
+                       onclick="return confirm('¿Está seguro de limpiar la mora?')">
+                        Limpiar Mora
+                    </a>
+                    {% endif %}
+                </div>
             </td>
         </tr>
         {% endfor %}
