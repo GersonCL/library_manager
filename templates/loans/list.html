@@ -12,8 +12,10 @@
             <th>Fecha de Préstamo</th>
             <th>Fecha de Devolución</th>
             <th>Días de Préstamo</th>
-            <th>Renovaciones</th>
-            <th>Mora</th>
+            <!-- Aqui vamos a comentar este espacio porque en esta lista 
+             no es necesario mostrar estos espacios -->
+            <!-- <th>Renovaciones</th>
+            <th>Mora</th> -->
             <th>Estado</th>
         </tr>
     </thead>
@@ -32,8 +34,10 @@
             <td>{{ loan[2] }}</td>
             <td>{{ loan[3] }}</td>
             <td>{{ loan[4] }}</td>
-            <td>{{ loan[5] }}</td>
-            <td>${{ loan[6] }}</td>
+            <!-- Tambien aqui lo comentamos porque son los campos en los que se llenan
+             las renovaciones y mora-->
+            <!-- <td>{{ loan[5] }}</td>
+            <td>${{ loan[6] }}</td> -->
             <td>{{ loan[11] }}</td>
         </tr>
     {% endfor %}
