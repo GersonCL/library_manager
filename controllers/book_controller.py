@@ -179,6 +179,25 @@ def archived_books():
     cur.close()
     return render_template('books/archived.html', books=archived_books)
 
+# recuperar libro -- Victor Orellana
+@app.route('/list_books/<int:id>', methods=['POST'])
+def recover_book(id):
+    succes, message = Book.recover(id)
+    if succes:
+        flash(message, 'success')
+    else:
+        flash(message, 'danger')
+    return redirect(url_for('list_books'))
+#recuperar libros -- Victor Orellana
+@app.route('/archived_books')
+def recover_books():
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM books WHERE status = 'DISPONIBLE'")
+    archived_books = cur.fetchall()
+    cur.close()
+    return render_template('books/archived.html', books=archived_books)
+
+
 
 @app.route('/books/delete/<int:id>')
 def delete_book(id):

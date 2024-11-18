@@ -25,6 +25,15 @@
             <td>{{ book[5] }}</td>
             <td>{{ book[6] }}</td>
             <td>{{ book[8] }}</td>
+            <!-- agregando aca botones eliminar y recuperar -- Victor Orellana -->
+            <td>
+                <a href="{{ url_for('delete_book', id=book[0]) }}" class="btn btn-sm btn-danger" onclick="Confirmación('¿Está seguro de que desea eliminar este libro?')">Eliminar</a>
+            </td>
+            <td>
+                <form action="{{ url_for('recover_book', id=book[0]) }}" method="POST" style="display:inline;">
+                    <button type="submit" class="btn btn-sm btn-info">Recuperar</button>
+                </form>
+            </td>
         </tr>
         {% endfor %}
     </tbody>

@@ -21,9 +21,9 @@ def validate_materia(materia):
     if not materia or not re.match(r'^[A-Za-záéíóúÁÉÍÓÚÑñ\w\s]+$', materia):
         return False, 'La materia es obligatoria y no puede contener números ni caracteres especiales.'
     return True, ''
-
+# aumento el code a 15 para quitar la validacion al editar libro -- Victor Orellana
 def validate_code(code):
-    if len(code) > 10:
+    if len(code) >= 15:
         return False, "El limite de codigo es de 10 digitos"
     if not code or not re.match(r'^[\w\s]+$', code):
         return False, 'El código es obligatorio.'

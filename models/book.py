@@ -139,6 +139,34 @@ class Book:
         cur.close()
         return True, "Libro archivado exitosamente."
     
+    #recuperar libro -- Victor Orellana
+    
+    @staticmethod
+    def recover(id_book):
+        cur = mysql.connection.cursor()
+        
+        # Verificar el estado del libro
+        cur.execute("SELECT status FROM books WHERE id_book = %s", (id_book,))
+        status = cur.fetchone()[0]
+        
+        # Verificar si hay libros prestados
+        cur.execute("""
+            SELECT SUM(quantity) 
+            FROM loan_books 
+            WHERE id_book = %s AND return_date >= %s
+        """, (id_book, date.today()))
+        quantity_borrowed = cur.fetchone()[0] or 0
+        
+        if status == 'DISPONIBLE' or quantity_borrowed > 0:
+            cur.close()
+            return False, "No se puede recuperar un libro obsoleto"
+        
+        cur.execute("UPDATE books SET status = 'DISPONIBLE' WHERE id_book = %s", (id_book,))
+        mysql.connection.commit()
+        cur.close()
+        return True, "Libro recuperado exitosamente."
+    # hasta aca es el metodo de recuperar libro -- Victor Orellana
+   
     @staticmethod
     def get_available():
         cur = mysql.connection.cursor()
