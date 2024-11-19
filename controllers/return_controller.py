@@ -1,21 +1,35 @@
 from flask import render_template, request, redirect, url_for, flash, jsonify
-from config import app
+from config import app, mysql
 from models.returns import Returns
 from models.loan import Loan
 import logging
 
-@app.route('/returns')
+@app.route('/returns', methods=['GET'])
 def list_returns():
-    try:
-        returns = Returns.get_all()
-        if not returns:
-            flash('No se encontraron devoluciones.', 'info')
-        logging.info(f"Número de devoluciones recuperadas: {len(returns)}")
-        return render_template('returns/list.html', returns=returns)
-    except Exception as e:
-        logging.error(f"Error al listar las devoluciones: {e}")
-        flash('Ocurrió un error al cargar las devoluciones.', 'error')
-        return render_template('returns/list.html', returns=[])
+    query = request.args.get('query', '').strip()
+    cursor = mysql.connection.cursor()
+
+    if query:
+        # Buscar devoluciones relacionadas con el nombre o apellido del estudiante
+        cursor.execute("""
+            SELECT r.id_return, r.id_loan, s.name, s.lastname,
+                   GROUP_CONCAT(b.title SEPARATOR ', ') AS books,
+                   r.return_date, r.days_late, r.late_fee
+            FROM returns r
+            JOIN loans l ON r.id_loan = l.id_loan
+            JOIN students s ON l.id_student = s.id_student
+            JOIN returned_books rb ON r.id_return = rb.id_return
+            JOIN books b ON rb.id_book = b.id_book
+            WHERE s.name LIKE %s OR s.lastname LIKE %s
+            GROUP BY r.id_return
+        """, (f'%{query}%', f'%{query}%'))
+        results = cursor.fetchall()
+    else:
+        # Mostrar una lista vacía si no se realiza una búsqueda
+        results = []
+
+    cursor.close()
+    return render_template('returns/list.html', returns=results, query=query)
 
 @app.route('/returns/create', methods=['GET', 'POST'])
 def create_return():
