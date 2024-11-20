@@ -63,6 +63,19 @@ CREATE TABLE IF NOT EXISTS returned_books (
     FOREIGN KEY (id_book) REFERENCES books(id_book)
 );
 
+-- New Tables
+CREATE TABLE IF NOT EXISTS employees (
+    id_employee INT AUTO_INCREMENT PRIMARY KEY,
+	code VARCHAR(10) UNIQUE NOT NULL,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    national_id VARCHAR(9) UNIQUE NOT NULL,
+    address VARCHAR(150) NOT NULL, 
+    phone_number VARCHAR(15) NOT NULL,
+	age TINYINT DEFAULT 1,
+    role ENUM('manager', 'librarian') NOT NULL 
+);
+
 -- Indexes
 CREATE INDEX idx_student_name ON students(name, lastname);
 CREATE INDEX idx_book_title ON books(title);
