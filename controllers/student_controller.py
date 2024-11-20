@@ -99,7 +99,7 @@ def search_students():
     
     cur = mysql.connection.cursor()
     sql_query = """
-        SELECT s.id_student, s.name, s.lastname, s.student_id, s.books_borrowed
+        SELECT s.id_student, s.name, s.lastname, s.student_id, s.books_borrowed, s.late_fee
         FROM students s
         WHERE s.name LIKE %s OR s.lastname LIKE %s OR s.student_id LIKE %s
         LIMIT 10
@@ -114,7 +114,8 @@ def search_students():
         'id': student[0],
         'name': f"{student[1]} {student[2]}",
         'student_id': student[3],
-        'books_borrowed': student[4]
+        'books_borrowed': student[4],
+        'late_fee': float(student[5]) if student[5] else 0.00
     } for student in students]
     
     return jsonify(result)

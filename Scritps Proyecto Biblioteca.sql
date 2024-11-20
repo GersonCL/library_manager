@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS loans (
     loan_days INT NOT NULL,
     renewals INT DEFAULT 0,
     late_fee DECIMAL(5,2) DEFAULT 0.00,
-    -- status ENUM('active', 'returned') DEFAULT 'active',
+    status ENUM('active', 'returned') DEFAULT 'active',
     FOREIGN KEY (id_student) REFERENCES students(id_student)
 );
 
@@ -61,6 +61,19 @@ CREATE TABLE IF NOT EXISTS returned_books (
     PRIMARY KEY (id_return, id_book),
     FOREIGN KEY (id_return) REFERENCES returns(id_return),
     FOREIGN KEY (id_book) REFERENCES books(id_book)
+);
+
+-- New Tables
+CREATE TABLE IF NOT EXISTS employees (
+    id_employee INT AUTO_INCREMENT PRIMARY KEY,
+	code VARCHAR(10) UNIQUE NOT NULL,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    national_id VARCHAR(9) UNIQUE NOT NULL,
+    address VARCHAR(150) NOT NULL, 
+    phone_number VARCHAR(15) NOT NULL,
+	age TINYINT DEFAULT 1,
+    role ENUM('manager', 'librarian') NOT NULL 
 );
 
 -- Indexes
