@@ -48,8 +48,9 @@ class Book:
         day_one_digit = current_date.day
 
   # Obtener las iniciales del libro -- Victor Orellana
+  #ahora ya permite ingresar si un libro comineza con numero -- Victor Orellana
         words = bookname.split()
-        initials_book_ = ''.join(word[0].upper() for word in words[:2])
+        initials_book_ = ''.join(word[0].upper() if word[0].isalnum() else '' for word in words[:2])
 
         cur = mysql.connection.cursor()
         while True:
@@ -113,31 +114,47 @@ class Book:
         cur.close()
         return True, "Libro eliminado con éxito."
     
-
+ # se ha modificado el archivado de libros -- Victor Orellana
     @staticmethod
     def archive(id_book):
-        cur = mysql.connection.cursor()
-        
-        # Verificar el estado del libro
-        cur.execute("SELECT status FROM books WHERE id_book = %s", (id_book,))
-        status = cur.fetchone()[0]
-        
-        # Verificar si hay libros prestados
-        cur.execute("""
-            SELECT SUM(quantity) 
-            FROM loan_books 
-            WHERE id_book = %s AND return_date >= %s
-        """, (id_book, date.today()))
-        quantity_borrowed = cur.fetchone()[0] or 0
-        
-        if status == 'PRESTADO' or quantity_borrowed > 0:
-            cur.close()
-            return False, "No se puede archivar un libro que está prestado"
-        
-        cur.execute("UPDATE books SET status = 'OBSOLETO' WHERE id_book = %s", (id_book,))
-        mysql.connection.commit()
+     cur = mysql.connection.cursor()
+
+    # Verificar si el libro tiene la misma cantidad de stock que la cantidad disponible
+     cur.execute("SELECT stock, quantity FROM books WHERE id_book = %s", (id_book,))
+     result = cur.fetchone()
+    
+     if not result:
         cur.close()
-        return True, "Libro archivado exitosamente."
+        return False, "El libro no existe en la base de datos."
+    
+     stock, quantity = result
+
+     # Si la cantidad total (stock) no es igual a la cantidad disponible (quantity), no se puede archivar
+     if stock != quantity:
+        cur.close()
+        return False, "No puedes archivar un libro que tiene un préstamo vigente."
+
+    # Verificar si el libro está prestado actualmente (tiene préstamos no devueltos)
+     cur.execute("""
+        SELECT COUNT(*)
+        FROM loan_books lb
+        JOIN loans l ON lb.id_loan = l.id_loan
+        WHERE lb.id_book = %s AND (l.return_date IS NULL OR l.return_date >= %s)
+    """, (id_book, date.today()))
+    
+     count = cur.fetchone()[0]
+
+    # Si hay préstamos activos, no se puede archivar el libro
+     if count > 0:
+        cur.close()
+        return False, "No se puede archivar un libro que tiene un préstamo vigente."
+
+    # Si no hay préstamos activos, proceder a archivar el libro
+     cur.execute("UPDATE books SET status = 'OBSOLETO' WHERE id_book = %s", (id_book,))
+     mysql.connection.commit()
+     cur.close()
+ 
+     return True, "Libro archivado exitosamente."
     
     #recuperar libro -- Victor Orellana
     
