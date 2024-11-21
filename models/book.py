@@ -34,37 +34,49 @@ class Book:
         return book_id
 
 
+    # se ha cambiado la logica para iniciar el libro en caso de que se inicie con un numero -- Victor Orellana
     @staticmethod
     def generate_book_id(bookname):
-
-#creando variable para manejar la fecha -- Victor Orellana
+        # Crear variable para manejar la fecha
         current_date = datetime.datetime.now()
 
-# 4 variables declaradas para la fecha, mes  y año -- Victor Orellana
-        current_year = current_date.year
-# el año idica que solo sera en cuenta dos digitos -- Victor Orellana
-        year_two_digit = str(current_year)[-2:]
+        # Obtener año, mes y día
+        year_two_digit = str(current_date.year)[-2:]
         month_two_digit = current_date.strftime("%m")
         day_one_digit = current_date.day
 
-  # Obtener las iniciales del libro -- Victor Orellana
-  #ahora ya permite ingresar si un libro comineza con numero -- Victor Orellana
+        # Obtener las iniciales del libro, omitiendo números si el libro comienza con uno
         words = bookname.split()
-        initials_book_ = ''.join(word[0].upper() if word[0].isalnum() else '' for word in words[:2])
+        initials_book_ = ''
 
+        for word in words:
+            if word[0].isalpha():  # Solo tomamos la inicial si la palabra empieza con una letra
+                initials_book_ += word[0].upper()
+
+            if len(initials_book_) >= 2:  # Solo tomamos las primeras dos iniciales
+                break
+
+        # Si no hay suficientes iniciales alfabéticas, tomamos los primeros caracteres alfabéticos disponibles
+        if not initials_book_:
+            initials_book_ = ''.join(c.upper() for c in bookname if c.isalpha())[:2]
+
+        # Conectar a la base de datos
         cur = mysql.connection.cursor()
+
+        # Generar el código único para el libro
         while True:
-# generar 3 digitos aleatorios -- Victor Orellana
+            # Generar 3 dígitos aleatorios
             random_digits = ''.join(random.choices(string.digits, k=3))
 
-#obtener el book_id -- Victor Orellana
+            # Crear el código con las iniciales, los dígitos aleatorios y la fecha
             code = f"{initials_book_}{random_digits}{day_one_digit}{month_two_digit}{year_two_digit}"
 
-# verificar si ya existe
+            # Verificar si el código ya existe en la base de datos
             cur.execute("SELECT COUNT(1) FROM books WHERE id_book = %s", (code,))
             if cur.fetchone()[0] == 0:
                 cur.close()
                 return code
+            #hasta aca se ha modificado el ingreso de titulo de libro -- Victor Orellana
 
     @staticmethod
     def get_all():
