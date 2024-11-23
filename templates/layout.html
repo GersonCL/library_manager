@@ -23,20 +23,43 @@
         }
 
         .alert-error {
-            background-color: #f8d7da; /* Color de fondo rojo claro */
-            color: #721c24; /* Color del texto rojo oscuro */
-            border: 1px solid #f5c6cb; /* Borde rojo */
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
         }
 
+        /* Estilo para el nombre del usuario */
+        .user-name {
+            color: white;
+            margin-right: 15px;
+        }
+
+        /* Estilo para el botón de logout */
+        .logout-btn {
+            color: #dc3545;
+            border-color: #dc3545;
+        }
+        
+        .logout-btn:hover {
+            background-color: #dc3545;
+            color: white;
+        }
     </style>
 </head>
 <body>
     <nav class="navbar navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center justify-content-center w-100" href="{{ url_for('index') }}">
-                <i class="fas fa-home me-2"></i>
-                <span>Inicio</span>
-            </a>
+            <div class="d-flex justify-content-between align-items-center w-100">
+                <a href="{{ url_for('index') }}" class="navbar-brand">Inicio</a>
+                {% if session.get('employee_id') %}
+                    <div class="d-flex align-items-center">
+                        <span class="user-name">{{ session.get('employee_name') }}</span>
+                        <a href="{{ url_for('logout') }}" class="btn btn-outline-danger btn-sm logout-btn">
+                            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
         </div>
     </nav>
 
@@ -59,7 +82,10 @@
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
-                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
                 {% endfor %}
             {% endif %}
         {% endwith %}
@@ -70,5 +96,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    {% block scripts %}{% endblock %}
 </body>
 </html>

@@ -87,3 +87,51 @@ def validate_loan_days(loan_days):
         return True, loan_days
     except ValueError:
         return False, 'La cantidad debe ser un número entero.'
+    
+
+# Nuevas validaciones para empleados
+def validate_national_id(national_id):
+    if len(national_id) != 9:
+        return False, "El DUI debe tener 9 dígitos."
+    if not national_id or not re.match(r'^\d{8}-?\d$', national_id):
+        return False, 'El formato del DUI no es válido'
+    return True, ''
+
+def validate_phone(phone):
+    if len(phone) > 15:
+        return False, "El número de teléfono no puede exceder 15 caracteres."
+    if not phone or not re.match(r'^[0-9-+\s]+$', phone):
+        return False, 'El formato del teléfono no es válido'
+    return True, ''
+
+def validate_age(age):
+    try:
+        age = int(age)
+        if age < 18 or age > 100:
+            return False, 'La edad debe estar entre 18 y 100 años'
+        return True, age
+    except ValueError:
+        return False, 'La edad debe ser un número entero'
+
+def validate_email(email):
+    if len(email) > 100:
+        return False, "El correo no puede exceder 100 caracteres."
+    if not email or not re.match(r'^[\w\.-]+@[\w\.-]+\.\w+$', email):
+        return False, 'El formato del correo electrónico no es válido'
+    return True, ''
+
+def validate_address(address):
+    if len(address) > 150:
+        return False, "La dirección no puede exceder 150 caracteres."
+    if not address or not address.strip():
+        return False, 'La dirección es obligatoria'
+    return True, ''
+
+def validate_password(password):
+    if len(password) < 6:
+        return False, "La contraseña debe tener al menos 6 caracteres"
+    if len(password) > 50:
+        return False, "La contraseña no puede exceder 50 caracteres"
+    if not password or not re.match(r'^[\w@#$%^&+=]+$', password):
+        return False, 'La contraseña contiene caracteres no permitidos'
+    return True, ''    

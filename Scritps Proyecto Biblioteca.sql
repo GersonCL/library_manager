@@ -66,14 +66,18 @@ CREATE TABLE IF NOT EXISTS returned_books (
 -- New Tables
 CREATE TABLE IF NOT EXISTS employees (
     id_employee INT AUTO_INCREMENT PRIMARY KEY,
-	code VARCHAR(10) UNIQUE NOT NULL,
+    code VARCHAR(10) UNIQUE NOT NULL,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     national_id VARCHAR(9) UNIQUE NOT NULL,
     address VARCHAR(150) NOT NULL, 
     phone_number VARCHAR(15) NOT NULL,
-	age TINYINT DEFAULT 1,
-    role ENUM('manager', 'librarian') NOT NULL 
+    age TINYINT DEFAULT 1,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role ENUM('manager', 'librarian') NOT NULL,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Indexes
@@ -91,3 +95,30 @@ ALTER TABLE students ADD COLUMN late_fee DECIMAL(10,2) DEFAULT 0.00;
 
 ALTER TABLE books
 ADD COLUMN update_date DATETIME NULL;
+
+
+INSERT INTO employees (
+    code,
+    first_name,
+    last_name,
+    national_id,
+    address,
+    phone_number,
+    age,
+    email,
+    password,
+    role,
+    is_active
+) VALUES (
+    'GACL',
+    'Gerson',
+    'Carranza',
+    '05438654-8',
+    'Av. UFG',
+    '7777-7777',
+    28,
+    'gerson@gmail.com',
+    'admin',
+    'manager',
+    TRUE
+);
