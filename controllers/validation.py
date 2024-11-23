@@ -91,8 +91,8 @@ def validate_loan_days(loan_days):
 
 # Nuevas validaciones para empleados
 def validate_national_id(national_id):
-    if len(national_id) != 9:
-        return False, "El DUI debe tener 9 dígitos."
+    if len(national_id) != 10:
+        return False, "El DUI debe tener 10 dígitos."
     if not national_id or not re.match(r'^\d{8}-?\d$', national_id):
         return False, 'El formato del DUI no es válido'
     return True, ''

@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS employees (
     code VARCHAR(10) UNIQUE NOT NULL,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
-    national_id VARCHAR(9) UNIQUE NOT NULL,
+    national_id VARCHAR(10) UNIQUE NOT NULL,
     address VARCHAR(150) NOT NULL, 
     phone_number VARCHAR(15) NOT NULL,
     age TINYINT DEFAULT 1,
