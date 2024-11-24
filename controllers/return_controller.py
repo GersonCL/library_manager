@@ -3,6 +3,7 @@ from config import app, mysql
 from models.returns import Returns
 from models.loan import Loan
 import logging
+from utils.debug_utils import print_query_results
 
 @app.route('/returns', methods=['GET'])
 def list_returns():
@@ -24,6 +25,8 @@ def list_returns():
             GROUP BY r.id_return
         """, (f'%{query}%', f'%{query}%'))
         results = cursor.fetchall()
+                    # Debug print
+        print_query_results(results, "Devoluciones Search")
     else:
         # Mostrar una lista vacía si no se realiza una búsqueda
         results = []

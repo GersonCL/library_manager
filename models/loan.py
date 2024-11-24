@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from models.book import Book
 from models.student import Student
 import logging
+from utils.debug_utils import print_query_results
 
 class Loan:
     def __init__(self, id_student, loan_date, return_date, loan_days, renewals=0, late_fee=0.00):
@@ -100,23 +101,7 @@ class Loan:
             loans = cur.fetchall()
             
             # Debug print
-            for loan in loans:
-                print("\nDetalle de préstamo:")
-                print(f"0: id_loan = {loan[0]}")
-                print(f"1: id_student = {loan[1]}")
-                print(f"2: loan_date = {loan[2]}")
-                print(f"3: return_date = {loan[3]}")
-                print(f"4: loan_days = {loan[4]}")
-                print(f"5: renewals = {loan[5]}")
-                print(f"6: late_fee = {loan[6]}")
-                print(f"7: status = {loan[7]}")
-                print(f"8: student_name = {loan[8]}")
-                print(f"9: student_lastname = {loan[9]}")
-                print(f"10: books = {loan[10]}")
-                print(f"11: loan_status = {loan[11]}")
-                print(f"12: employee_first_name = {loan[12]}")
-                print(f"13: employee_last_name = {loan[13]}")
-                print("-" * 50)
+            print_query_results(loans, "Préstamos")
             
             return loans
         finally:
@@ -142,6 +127,10 @@ class Loan:
                 ORDER BY l.loan_date DESC
             """)
             active_loans = cur.fetchall()
+
+            # Debug print
+            print_query_results(active_loans, "Préstamos Activos")
+
             return active_loans
         finally:
             cur.close()
