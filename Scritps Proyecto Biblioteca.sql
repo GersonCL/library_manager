@@ -23,6 +23,22 @@ CREATE TABLE IF NOT EXISTS books (
     status ENUM('DISPONIBLE', 'PRESTADO', 'OBSOLETO') DEFAULT 'DISPONIBLE'
 );
 
+CREATE TABLE IF NOT EXISTS employees (
+    id_employee INT AUTO_INCREMENT PRIMARY KEY,
+    code VARCHAR(10) UNIQUE NOT NULL,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    national_id VARCHAR(10) UNIQUE NOT NULL,
+    address VARCHAR(150) NOT NULL, 
+    phone_number VARCHAR(15) NOT NULL,
+    birthdate DATE NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role ENUM('manager', 'librarian') NOT NULL,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE IF NOT EXISTS loans (
     id_loan INT AUTO_INCREMENT PRIMARY KEY,
     id_student INT NOT NULL,
@@ -65,22 +81,6 @@ CREATE TABLE IF NOT EXISTS returned_books (
     FOREIGN KEY (id_book) REFERENCES books(id_book)
 );
 
--- New Tables
-CREATE TABLE IF NOT EXISTS employees (
-    id_employee INT AUTO_INCREMENT PRIMARY KEY,
-    code VARCHAR(10) UNIQUE NOT NULL,
-    first_name VARCHAR(50) NOT NULL,
-    last_name VARCHAR(50) NOT NULL,
-    national_id VARCHAR(10) UNIQUE NOT NULL,
-    address VARCHAR(150) NOT NULL, 
-    phone_number VARCHAR(15) NOT NULL,
-    birthdate DATE NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    role ENUM('manager', 'librarian') NOT NULL,
-    is_active BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
 
 -- Indexes
 CREATE INDEX idx_student_name ON students(name, lastname);
@@ -88,7 +88,6 @@ CREATE INDEX idx_book_title ON books(title);
 CREATE INDEX idx_loan_dates ON loans(loan_date, return_date);
 CREATE INDEX idx_loan_student ON loans(id_student);
 CREATE INDEX idx_loan_book ON loan_books(id_book);
-
 
 
 -- Alter Table
@@ -106,7 +105,7 @@ INSERT INTO employees (
     national_id,
     address,
     phone_number,
-    age,
+    birthdate,
     email,
     password,
     role,
