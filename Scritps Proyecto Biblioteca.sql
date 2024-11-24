@@ -32,7 +32,9 @@ CREATE TABLE IF NOT EXISTS loans (
     renewals INT DEFAULT 0,
     late_fee DECIMAL(5,2) DEFAULT 0.00,
     status ENUM('active', 'returned') DEFAULT 'active',
+    id_employee INT NOT NULL,
     FOREIGN KEY (id_student) REFERENCES students(id_student)
+    FOREIGN KEY (id_employee) REFERENCES students(id_employee)
 );
 
 CREATE TABLE IF NOT EXISTS loan_books (
