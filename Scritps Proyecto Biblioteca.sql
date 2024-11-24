@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS loans (
     status ENUM('active', 'returned') DEFAULT 'active',
     id_employee INT NOT NULL,
     FOREIGN KEY (id_student) REFERENCES students(id_student)
-    FOREIGN KEY (id_employee) REFERENCES students(id_employee)
+    FOREIGN KEY (id_employee) REFERENCES employees(id_employee)
 );
 
 CREATE TABLE IF NOT EXISTS loan_books (
