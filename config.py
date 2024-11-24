@@ -4,7 +4,7 @@ from flask_mysqldb import MySQL
 app = Flask(__name__)
 
 
-#version v 1.0.8.2
+#version v 1.0.8.3
 
 
 # Configuración de la base de datos
